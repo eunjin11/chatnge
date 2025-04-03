@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Header from "@/components/Header";
 
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +20,7 @@ const SignUpPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-[0px_2px_2px_0px_rgba(204,204,204,0.25)] p-4">
-        <div className="flex items-center justify-between">
-          <button className="text-[#5F6368]">{`<`}</button>
-          <h1 className="text-lg font-normal text-black">회원가입</h1>
-          <div className="w-8" />
-        </div>
-      </div>
+      <Header title="회원가입" />
 
       <div className="pt-20 px-6">
         <div className="max-w-sm mx-auto">
