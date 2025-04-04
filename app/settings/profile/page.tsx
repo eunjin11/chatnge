@@ -13,39 +13,7 @@ const ProfileSettingsPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      // TODO: Get user email from session/auth
-      const email = "user@example.com"; // This should be replaced with actual user email
-
-      const response = await fetch("/api/user/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          nickname,
-          birthdate,
-          motivation,
-          medicationStatus,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error);
-        return;
-      }
-
-      alert("프로필이 성공적으로 업데이트되었습니다.");
-      // Redirect to main page or dashboard
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Profile update error:", error);
-      alert("프로필 업데이트 중 오류가 발생했습니다.");
-    }
+    // TODO: Implement profile update logic
   };
 
   return (

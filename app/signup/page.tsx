@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Header from "@/components/Header";
+import { checkDuplicateEmail } from "../api/fetchAuth";
 
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
@@ -19,8 +20,13 @@ const SignUpPage = () => {
     setPassword(e.target.value);
   };
 
-  const handleCheckDuplicate = () => {
-    console.log("Checking duplicate email:", email);
+  const handleCheckDuplicate = async () => {
+    const isDuplicate = await checkDuplicateEmail(email);
+    if (isDuplicate) {
+      console.log("이미 존재하는 이메일입니다.");
+    } else {
+      console.log("사용 가능한 이메일입니다.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
