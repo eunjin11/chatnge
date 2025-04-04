@@ -1,9 +1,9 @@
 "use server";
-import "server-only";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { SignJWT } from "jose";
+import { error } from "console";
+import { SignJWT, jwtVerify } from "jose";
 
 const SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET_KEY || "your-secret-key"
@@ -12,6 +12,13 @@ const SECRET_KEY = new TextEncoder().encode(
 interface UserData {
   email: string;
   name: string;
+}
+
+interface ProfileUpdateData {
+  nickname?: string;
+  birthdate?: Date;
+  motivation?: string[];
+  medicationStatus?: "YES" | "NO" | "UNKNOWN";
 }
 
 async function createSessionToken(userData: UserData) {
@@ -52,7 +59,17 @@ export async function checkDuplicateEmail(email: string) {
   return response !== null;
 }
 
-export async function signup(email: string, name: string, password: string) {
+interface UserResponse {
+  user?: { email: string; name: string };
+  error?: string;
+}
+
+// 회원가입
+export async function signup(
+  email: string,
+  name: string,
+  password: string
+): Promise<UserResponse> {
   try {
     const isExistingUser = await checkDuplicateEmail(email);
     if (isExistingUser) {
@@ -65,14 +82,23 @@ export async function signup(email: string, name: string, password: string) {
     });
 
     // 회원가입 성공 후 세션 생성
-    return await createSessionToken({ email: user.email, name: user.name });
+    const sessionToken = await createSessionToken({
+      email: user.email,
+      name: user.name,
+    });
+
+    return { user: { email: user.email, name: user.name } };
   } catch (error) {
     console.error("Signup error:", error);
     return { error: "회원가입 중 오류가 발생했습니다." };
   }
 }
 
-export async function login(email: string, password: string) {
+// 로그인
+export async function login(
+  email: string,
+  password: string
+): Promise<UserResponse> {
   try {
     // 1. 사용자 찾기
     const user = await prisma.user.findUnique({
@@ -95,7 +121,12 @@ export async function login(email: string, password: string) {
     }
 
     // 3. 로그인 성공 후 세션 생성
-    return await createSessionToken({ email: user.email, name: user.name });
+    await createSessionToken({
+      email: user.email,
+      name: user.name,
+    });
+
+    return { user: { email: user.email, name: user.name } };
   } catch (error) {
     console.error("Login error:", error);
     return { error: "로그인 중 오류가 발생했습니다." };
@@ -115,5 +146,41 @@ export async function verifySession() {
   } catch (error) {
     console.error("Session verification error:", error);
     return null;
+  }
+}
+
+export async function updateProfile(profileData: ProfileUpdateData) {
+  try {
+    // 현재 로그인된 사용자의 이메일 가져오기
+    const token = (await cookies()).get("access-token");
+    if (!token) {
+      return { error: "로그인이 필요합니다." };
+    }
+
+    // JWT 토큰 검증 및 사용자 정보 추출
+    const verified = await jwtVerify(token.value, SECRET_KEY);
+    const userEmail = verified.payload.email as string;
+
+    // 프로필 정보 업데이트
+    const updatedUser = await prisma.user.update({
+      where: { email: userEmail },
+      data: {
+        ...profileData,
+        updatedAt: new Date(),
+      },
+      select: {
+        email: true,
+        name: true,
+        nickname: true,
+        birthdate: true,
+        motivation: true,
+        medicationStatus: true,
+      },
+    });
+
+    return { user: updatedUser };
+  } catch (error) {
+    console.error("Profile update error:", error);
+    return { error: "프로필 업데이트 중 오류가 발생했습니다." };
   }
 }

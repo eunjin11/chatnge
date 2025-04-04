@@ -26,7 +26,7 @@ model User {
   nickname        String?
   password        String
   birthdate       DateTime
-  motivation      String?
+  motivation      String[]  @default([])
   medicationStatus MedicationStatus @default(UNKNOWN)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
