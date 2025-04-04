@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 const SignUpPage = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -12,6 +13,10 @@ const SignUpPage = () => {
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
   };
 
   const handleCheckDuplicate = () => {
@@ -24,7 +29,7 @@ const SignUpPage = () => {
 
       <div className="pt-20 px-6">
         <div className="max-w-sm mx-auto">
-          <h2 className="text-xl font-bold text-black mb-2">정보 입력</h2>
+          <h2 className="text-xl font-bold text-[#36D0D3] mb-2">정보 입력</h2>
           <p className="text-sm text-[#585858] font-light mb-8">
             서비스 이용을 위해, 가입자님의 정보를 입력해주세요
           </p>
@@ -57,6 +62,18 @@ const SignUpPage = () => {
               value={name}
               onChange={handleNameChange}
               placeholder="이름을 입력해주세요"
+              className="w-full px-4 py-3 border-[1.5px] border-[#D9D9D9] rounded-2xl text-sm focus:outline-none focus:border-[#36D0D3]"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-base font-medium text-[#585858] mb-2">
+              비밀번호
+            </label>
+            <input
+              type="text"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="비밀번호를 입력해주세요"
               className="w-full px-4 py-3 border-[1.5px] border-[#D9D9D9] rounded-2xl text-sm focus:outline-none focus:border-[#36D0D3]"
             />
           </div>
