@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
-import { checkDuplicateEmail } from "../api/fetchAuth";
+import { checkDuplicateEmail, signup } from "../api/fetchAuth";
 
 const SignUpPage = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +34,13 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement signup logic
-    // After successful signup, redirect to profile settings
-    window.location.href = "/settings/profile";
+    try {
+      const response = await signup(email, name, password);
+      console.log(response);
+      router.push("/setting/profile");
+    } catch (error) {
+      console.error("회원가입 중 오류 발생:", error);
+    }
   };
 
   return (
