@@ -34,12 +34,20 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const response = await signup(email, name, password);
-      console.log(response);
-      router.push("/setting/profile");
+      const result = await signup(email, name, password);
+
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+
+      // 회원가입 및 자동 로그인 성공 시 메인 페이지로 이동
+      router.push("/");
     } catch (error) {
-      console.error("회원가입 중 오류 발생:", error);
+      console.error("Signup error:", error);
+      alert("회원가입 중 오류가 발생했습니다.");
     }
   };
 
