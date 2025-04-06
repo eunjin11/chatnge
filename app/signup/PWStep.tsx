@@ -63,7 +63,7 @@ function PWStep({ onNext }: PWStepProps) {
     <div className="pt-20 px-6">
       <div className="max-w-sm mx-auto">
         <h2 className="text-xl font-bold text-[#36D0D3] mb-1">비밀번호 입력</h2>
-        <p className="text-sm text-[#585858] font-light mb-8">
+        <p className="text-sm text-[#585858] mb-8">
           안전한 사용을 위해 비밀번호를 입력해주세요
         </p>
 

@@ -32,7 +32,7 @@ function FormInput({
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="text-sm h-[50px] border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
+        className="text-sm h-[50px] shadow-none border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
       />
     </div>
   );

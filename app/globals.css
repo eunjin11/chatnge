@@ -12,4 +12,10 @@
   --color-background: #ffffff;
   --color-foreground: #000000;
   --color-primary: #36d0d3;
+
+  --font-noto-sans-kr: "NotoSansKR Variable", sans-serif;
+}
+
+body {
+  font-family: var(--font-noto-sans-kr), sans-serif;
 }

@@ -60,7 +60,7 @@ function InfoStep({ onNext }: InfoStepProps) {
     <div className="pt-20 px-6">
       <div className="max-w-sm mx-auto">
         <h2 className="text-xl font-bold text-[#36D0D3] mb-1">정보 입력</h2>
-        <p className="text-sm text-[#585858] font-light mb-8">
+        <p className="text-sm text-[#585858] mb-8">
           서비스 이용을 위해, 가입자님의의 정보를 입력해주세요
         </p>
 
@@ -70,7 +70,11 @@ function InfoStep({ onNext }: InfoStepProps) {
               <Label className="block text-base font-medium text-[#585858] mb-2">
                 이름
               </Label>
-              <FormInput name="name" type="text" />
+              <FormInput
+                name="name"
+                type="text"
+                placeholder="이름을 입력해주세요"
+              />
             </div>
             {formState.errors.name && (
               <p className="text-red-500 text-xs mt-1">
@@ -85,7 +89,7 @@ function InfoStep({ onNext }: InfoStepProps) {
                 <Button
                   type="button"
                   onClick={handleCheckDuplicate}
-                  className="bg-[#36D0D3] text-white text-xs px-2 py-1 m-2 rounded-md whitespace-nowrap"
+                  className="bg-primary text-white text-xs px-2 h-[25px] m-2 rounded-[6px] whitespace-nowrap"
                 >
                   중복확인
                 </Button>
@@ -95,7 +99,7 @@ function InfoStep({ onNext }: InfoStepProps) {
                 placeholder="이메일을 입력해주세요"
                 {...register("email")}
                 onChange={(e) => setEmail(e.target.value)}
-                className="text-sm h-[50px] border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
+                className="text-sm h-[50px] shadow-none border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
               />
               {formState.errors.email && (
                 <p className="text-red-500 text-xs mt-1">

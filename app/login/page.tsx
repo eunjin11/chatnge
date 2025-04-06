@@ -56,7 +56,7 @@ const LoginPage = () => {
   const isFormValid = formState.isValid;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen px-4 bg-white">
       <Header title="로그인" />
 
       <div className="pt-20 py-3 max-w-sm mt-10 mx-auto">
