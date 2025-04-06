@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import FormButton from "@/components/form/FormButton";
+import { Button } from "@/components/ui/button";
 
 type NicknameStepProps = {
   onNext: () => void;
@@ -42,6 +43,7 @@ const NicknameStep = ({ onNext }: NicknameStepProps) => {
           className="my-3 mx-auto w-[250px] text-sm h-[50px] border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
         />
         <div className="flex-grow"></div>
+        <Button onClick={onNext}>{nickname}</Button>
         <FormButton type="button" text="다음" isValid={false} />
       </div>
     </div>

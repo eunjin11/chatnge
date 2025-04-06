@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 type BirthdateStepProps = {
@@ -5,7 +6,7 @@ type BirthdateStepProps = {
 };
 
 const BirthDateStep = ({ onNext }: BirthdateStepProps) => {
-  return <div>BirthDateStep</div>;
+  return <Button onClick={onNext}>BirthDateStep</Button>;
 };
 
 export default BirthDateStep;

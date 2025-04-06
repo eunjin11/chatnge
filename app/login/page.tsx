@@ -6,7 +6,6 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import { login } from "@/app/api/fetchAuth";
 import Link from "next/link";
@@ -68,7 +67,7 @@ const LoginPage = () => {
           className="mx-auto"
         />
         <h1 className="text-center text-lg font-medium my-6">
-          '챗인지'는 로그인 후 이용 가능합니다.
+          챗인지는 로그인 후 이용 가능합니다.
         </h1>
 
         <FormProvider {...methods}>

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 type ConfirmStepProps = {
@@ -5,7 +6,7 @@ type ConfirmStepProps = {
 };
 
 const ConfirmStep = ({ onNext }: ConfirmStepProps) => {
-  return <div>ConfirmStep</div>;
+  return <Button onClick={onNext}>ConfirmStep</Button>;
 };
 
 export default ConfirmStep;

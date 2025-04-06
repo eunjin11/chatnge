@@ -2,7 +2,6 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { error } from "console";
 import { SignJWT, jwtVerify } from "jose";
 
 const SECRET_KEY = new TextEncoder().encode(
@@ -82,7 +81,7 @@ export async function signup(
     });
 
     // 회원가입 성공 후 세션 생성
-    const sessionToken = await createSessionToken({
+    await createSessionToken({
       email: user.email,
       name: user.name,
     });
