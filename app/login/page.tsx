@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import { login } from "@/app/api/fetchAuth";
 import Link from "next/link";
 import FormInput from "@/components/form/FormInput";
+import FormButton from "@/components/form/FormButton";
 
 const loginFormSchema = z.object({
   email: z.string().min(1, { message: "" }),
@@ -83,26 +84,18 @@ const LoginPage = () => {
               placeholder="비밀번호를 입력해주세요"
             />
             <div className="text-red-500 text-xs h-6">{error}</div>
-
-            <Button
-              type="submit"
-              className={`w-full h-[50px] text-white font-bold py-4 rounded-lg ${
-                isFormValid ? "bg-primary" : "bg-[#D7F8F8]"
-              }`}
-            >
-              로그인
-            </Button>
-
-            <div className="mt-4 text-center">
-              <Link
-                href="/signup"
-                className="text-sm text-[#585858] hover:text-[#36D0D3]"
-              >
-                회원가입
-              </Link>
-            </div>
+            <FormButton isValid={isFormValid} text="로그인" />
           </form>
         </FormProvider>
+
+        <div className="mt-4 text-center">
+          <Link
+            href="/signup"
+            className="text-sm text-[#585858] hover:text-[#36D0D3]"
+          >
+            회원가입
+          </Link>
+        </div>
       </div>
     </div>
   );
