@@ -38,13 +38,11 @@ const NicknameStep = ({ onNext }: NicknameStepProps) => {
         <Input
           type="text"
           onChange={(e) => setNickname(e.target.value)}
+          placeholder="닉네임을 입력해주세요"
           className="my-3 mx-auto w-[250px] text-sm h-[50px] border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
         />
         <div className="flex-grow"></div>
-
-        <div className="p-8">
-          <FormButton type="button" text="다음" isValid={!!!nickname} />
-        </div>
+        <FormButton type="button" text="다음" isValid={false} />
       </div>
     </div>
   );

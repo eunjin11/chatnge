@@ -8,6 +8,7 @@ import NicknameStep from "./NicknameStep";
 import BirthDateStep from "./BirthDateStep";
 import MotivationStep from "./MotivationStep";
 import MedicationStatusStep from "./MedicationStatusStep";
+import ConfirmStep from "./ConfirmStep";
 
 type MedicationStatus = "YES" | "NO" | "UNKNOWN";
 
@@ -70,6 +71,7 @@ const ProfileSettingPage = () => {
       {step === "복용 여부" && (
         <MedicationStatusStep onNext={() => setStep("확인")} />
       )}
+      {step === "확인" && <ConfirmStep onNext={() => router.push("/")} />}
     </>
   );
 };
