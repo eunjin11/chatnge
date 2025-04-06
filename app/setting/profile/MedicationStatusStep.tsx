@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 type MedicationStatusStepProps = {
@@ -5,7 +6,7 @@ type MedicationStatusStepProps = {
 };
 
 const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
-  return <div>MedicationStatusStep</div>;
+  return <Button onClick={onNext}>MedicationStatusStep</Button>;
 };
 
 export default MedicationStatusStep;

@@ -1,11 +1,12 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 type MotivationStepProps = {
   onNext: () => void;
 };
 
-const BirthDateStep = ({ onNext }: MotivationStepProps) => {
-  return <div>BirthDateStep</div>;
+const MotivationStep = ({ onNext }: MotivationStepProps) => {
+  return <Button onClick={onNext}>MotivationStep</Button>;
 };
 
-export default BirthDateStep;
+export default MotivationStep;

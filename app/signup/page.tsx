@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
-import { checkDuplicateEmail, signup } from "../api/fetchAuth";
-import { register } from "module";
+import { signup } from "../api/fetchAuth";
 import InfoStep from "./InfoStep";
 import PWStep from "./PWStep";
 
