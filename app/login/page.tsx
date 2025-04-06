@@ -1,94 +1,108 @@
 "use client";
 
-import React, { useState } from "react";
-import { login } from "@/app/api/fetchAuth";
-import Header from "@/components/Header";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/Header";
+import { login } from "@/app/api/fetchAuth";
+import Link from "next/link";
+import FormInput from "@/components/form/FormInput";
+
+const loginFormSchema = z.object({
+  email: z.string().min(1, { message: "" }),
+  password: z.string().min(1, { message: "" }),
+});
+
+type FormValues = z.infer<typeof loginFormSchema>;
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const methods = useForm<FormValues>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const { formState, handleSubmit } = methods;
+
+  const onSubmit = async (values: FormValues) => {
     setError("");
 
     try {
-      const result = await login(email, password);
+      console.log(values);
+      const result = await login(values.email, values.password);
+      console.log(result);
 
       if (result.error) {
-        setError(result.error);
+        console.log(result.error);
+        setError(`*${result.error}`);
         return;
       }
-
-      // 로그인 성공 시 메인 페이지로 이동
       router.push("/");
     } catch (error) {
-      setError("로그인 중 오류가 발생했습니다.");
+      setError(`*${error}`);
     }
   };
+
+  const isFormValid = formState.isValid;
 
   return (
     <div className="min-h-screen bg-white">
       <Header title="로그인" />
 
-      <div className="pt-20 px-6">
-        <div className="max-w-sm mx-auto">
-          <h2 className="text-xl font-bold text-[#36D0D3] mb-2">로그인</h2>
-          <p className="text-sm text-[#585858] font-light mb-8">
-            서비스 이용을 위해 로그인해 주세요
-          </p>
+      <div className="pt-20 py-3 max-w-sm mt-10 mx-auto">
+        <Image
+          src="/Logo.png"
+          alt="챗인지 로고"
+          width={60}
+          height={60}
+          className="mx-auto"
+        />
+        <h1 className="text-center text-lg font-medium my-6">
+          '챗인지'는 로그인 후 이용 가능합니다.
+        </h1>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label className="block text-base font-medium text-[#585858] mb-2">
-                이메일
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="이메일을 입력해주세요"
-                required
-                className="w-full px-4 py-3 border-[1.5px] border-[#D9D9D9] rounded-2xl text-sm focus:outline-none focus:border-[#36D0D3]"
-              />
-            </div>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+            <FormInput
+              name="email"
+              type="string"
+              placeholder="이메일을 입력해주세요"
+            />
+            <FormInput
+              name="password"
+              type="password"
+              placeholder="비밀번호를 입력해주세요"
+            />
+            <div className="text-red-500 text-xs h-6">{error}</div>
 
-            <div className="mb-6">
-              <label className="block text-base font-medium text-[#585858] mb-2">
-                비밀번호
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="비밀번호를 입력해주세요"
-                required
-                className="w-full px-4 py-3 border-[1.5px] border-[#D9D9D9] rounded-2xl text-sm focus:outline-none focus:border-[#36D0D3]"
-              />
-            </div>
-
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
-            <button
+            <Button
               type="submit"
-              className="w-full bg-[#36D0D3] text-white font-bold py-4 rounded-lg"
+              className={`w-full h-[50px] text-white font-bold py-4 rounded-lg ${
+                isFormValid ? "bg-primary" : "bg-[#D7F8F8]"
+              }`}
             >
               로그인
-            </button>
+            </Button>
 
             <div className="mt-4 text-center">
-              <a
+              <Link
                 href="/signup"
                 className="text-sm text-[#585858] hover:text-[#36D0D3]"
               >
-                아직 회원이 아니신가요? 회원가입
-              </a>
+                회원가입
+              </Link>
             </div>
           </form>
-        </div>
+        </FormProvider>
       </div>
     </div>
   );
