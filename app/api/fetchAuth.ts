@@ -111,13 +111,13 @@ export async function login(
     });
 
     if (!user) {
-      return { error: "이메일이 존재하지 않습니다." };
+      return { error: "이메일 혹은 비밀번호가 틀렸어요. 다시 확인해주세요" };
     }
 
     // 2. 비밀번호 확인
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return { error: "비밀번호가 일치하지 않습니다." };
+      return { error: "이메일 혹은 비밀번호가 틀렸어요. 다시 확인해주세요" };
     }
 
     // 3. 로그인 성공 후 세션 생성
