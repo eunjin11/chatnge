@@ -1,10 +1,10 @@
 import React from "react";
 
-type BirthdateStepProps = {
+type MotivationStepProps = {
   onNext: () => void;
 };
 
-const BirthDateStep = ({ onNext }: BirthdateStepProps) => {
+const BirthDateStep = ({ onNext }: MotivationStepProps) => {
   return <div>BirthDateStep</div>;
 };
 

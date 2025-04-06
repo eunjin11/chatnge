@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { updateProfile } from "@/app/api/fetchAuth";
 import NicknameStep from "./NicknameStep";
+import BirthDateStep from "./BirthDateStep";
+import MotivationStep from "./MotivationStep";
+import MedicationStatusStep from "./MedicationStatusStep";
 
 type MedicationStatus = "YES" | "NO" | "UNKNOWN";
 
@@ -15,7 +18,12 @@ const ProfileSettingPage = () => {
     "닉네임" | "생일" | "계기" | "복용 여부" | "확인"
   >("닉네임");
 
-  const [registerData, setRegisterData] = useState({
+  const [registerData, setRegisterData] = useState<{
+    nickname: string;
+    birthdate: string;
+    motivation: string[];
+    medicationStatus: MedicationStatus;
+  }>({
     nickname: "",
     birthdate: "",
     motivation: [],
@@ -30,12 +38,12 @@ const ProfileSettingPage = () => {
 
     try {
       const result = await updateProfile({
-        nickname: registerData.nickname || "",
+        nickname: registerData.nickname,
         birthdate: registerData.birthdate
           ? new Date(registerData.birthdate)
           : new Date(),
-        motivation: registerData.motivation || [],
-        medicationStatus: "UNKNOWN",
+        motivation: registerData.motivation,
+        medicationStatus: registerData.medicationStatus,
       });
 
       if (result.error) {
@@ -55,9 +63,13 @@ const ProfileSettingPage = () => {
     <>
       <Header title="프로필" />
       {step === "닉네임" && <NicknameStep onNext={() => setStep("생일")} />}
-      {step === "생일" && <NicknameStep onNext={() => setStep("계기")} />}
-      {step === "계기" && <NicknameStep onNext={() => setStep("복용 여부")} />}
-      {step === "복용 여부" && <NicknameStep onNext={() => setStep("확인")} />}
+      {step === "생일" && <BirthDateStep onNext={() => setStep("계기")} />}
+      {step === "계기" && (
+        <MotivationStep onNext={() => setStep("복용 여부")} />
+      )}
+      {step === "복용 여부" && (
+        <MedicationStatusStep onNext={() => setStep("확인")} />
+      )}
     </>
   );
 };
