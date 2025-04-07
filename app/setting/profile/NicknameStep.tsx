@@ -15,14 +15,7 @@ const NicknameStep = ({ onNext }: NicknameStepProps) => {
     <div className="h-screen bg-white">
       <div className="flex flex-col bg-primary ">
         <ProfileFormInfo
-          step="1/4"
-          title={
-            <>
-              챗인지를 위한 첫 대화,
-              <br />
-              나를 소개해요
-            </>
-          }
+          step="1/5"
           subTitle={"어떤 이름으로 불러드릴까요?"}
           text={"이 닉네임은 당신을 부를 소중한 이름이에요"}
         />
