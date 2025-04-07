@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import FormButton from "@/components/form/FormButton";
+import ProfileFormInfo from "./ProfileFormInfo";
 
 type NicknameStepProps = {
   onNext: () => void;
@@ -13,27 +14,18 @@ const NicknameStep = ({ onNext }: NicknameStepProps) => {
   return (
     <div className="h-screen bg-white">
       <div className="flex flex-col bg-primary ">
-        <div className="p-6 pt-20 pb-4">
-          <div className="bg-[#86e3e5] border-primary border-2 rounded-full px-2 inline-block mb-1">
-            <span className="text-white text-xs">1/4</span>
-          </div>
-          <h2 className="text-white text-2xl font-bold mt-2 mb-4">
-            챗인지를 위한 첫 대화,
-            <br />
-            나를 소개해요
-          </h2>
-
-          <div className="mt-2 mb-2">
-            <div className="bg-white text-gray-800 px-4 py-2 rounded-[10px] inline-block max-w-xs">
-              어떤 이름으로 불러드릴까요?
-            </div>
-          </div>
-          <div className="mt-20">
-            <p className="text-sm text-white text-center">
-              이 닉네임은 당신을 부를 소중한 이름이에요
-            </p>
-          </div>
-        </div>
+        <ProfileFormInfo
+          step="1/4"
+          title={
+            <>
+              챗인지를 위한 첫 대화,
+              <br />
+              나를 소개해요
+            </>
+          }
+          subTitle={"어떤 이름으로 불러드릴까요?"}
+          text={"이 닉네임은 당신을 부를 소중한 이름이에요"}
+        />
         <div className="flex-1 bg-white rounded-t-3xl flex flex-col">
           <div className="p-8 my-4 text-gray-800">
             <input
