@@ -4,9 +4,15 @@ type FormButtonProps = {
   isValid: boolean;
   type?: "submit" | "button";
   text: string;
+  onClick?: () => void;
 };
 
-function FormButton({ isValid, type = "submit", text }: FormButtonProps) {
+function FormButton({
+  isValid,
+  type = "submit",
+  text,
+  onClick,
+}: FormButtonProps) {
   return (
     <Button
       type={type}
@@ -14,6 +20,7 @@ function FormButton({ isValid, type = "submit", text }: FormButtonProps) {
         isValid ? "bg-primary" : "bg-[#D7F8F8] cursor-not-allowed"
       }`}
       disabled={!isValid}
+      onClick={onClick}
     >
       {text}
     </Button>
