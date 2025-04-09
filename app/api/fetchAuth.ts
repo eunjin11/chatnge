@@ -2,8 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { SignJWT, jwtVerify } from "jose";
-import { ProfileUpdateData, UserData, UserResponse } from "@/constants/types";
+import { SignJWT } from "jose";
+import { UserData, UserResponse } from "@/constants/types";
 
 const SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET_KEY || "your-secret-key"

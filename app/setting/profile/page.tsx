@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
 import NicknameStep from "./NicknameStep";
 import BirthDateStep from "./BirthDateStep";
 import MotivationStep from "./MotivationStep";

@@ -2,12 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
-import {
-  ProfileResponse,
-  ProfileUpdateData,
-  UserData,
-  UserResponse,
-} from "@/constants/types";
+import { ProfileResponse, ProfileUpdateData } from "@/constants/types";
 
 const SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET_KEY || "your-secret-key"
