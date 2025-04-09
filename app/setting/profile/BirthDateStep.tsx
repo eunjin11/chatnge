@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ProfileFormInfo from "./ProfileFormInfo";
 
 type BirthdateStepProps = {
-  onNext: () => void;
+  onNext: (birthdate: string) => void;
 };
 
 const BirthDateStep = ({ onNext }: BirthdateStepProps) => {
@@ -61,7 +61,7 @@ const BirthDateStep = ({ onNext }: BirthdateStepProps) => {
               type="button"
               text="다음"
               isValid={true}
-              onClick={onNext}
+              onClick={() => onNext(`${year}-${month}-${day}`)}
             />
           </div>
         </div>

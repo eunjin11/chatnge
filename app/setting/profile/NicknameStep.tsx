@@ -5,7 +5,7 @@ import FormButton from "@/components/form/FormButton";
 import ProfileFormInfo from "./ProfileFormInfo";
 
 type NicknameStepProps = {
-  onNext: () => void;
+  onNext: (nickname: string) => void;
 };
 
 const NicknameStep = ({ onNext }: NicknameStepProps) => {
@@ -39,7 +39,7 @@ const NicknameStep = ({ onNext }: NicknameStepProps) => {
               type="button"
               text="다음"
               isValid={true}
-              onClick={onNext}
+              onClick={() => onNext(nickname)}
             />
           </div>
         </div>

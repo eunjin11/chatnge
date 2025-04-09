@@ -3,24 +3,13 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
+import { ProfileUpdateData, UserData, UserResponse } from "@/constants/types";
 
 const SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET_KEY || "your-secret-key"
 );
 
-interface UserData {
-  email: string;
-  name: string;
-}
-
-interface ProfileUpdateData {
-  nickname?: string;
-  birthdate?: Date;
-  motivation?: string[];
-  medicationStatus?: "YES" | "NO" | "UNKNOWN";
-}
-
-async function createSessionToken(userData: UserData) {
+async function createSessionToken(userData: UserData): Promise<UserResponse> {
   try {
     // JWT 토큰 생성
     const token = await new SignJWT({
@@ -56,11 +45,6 @@ export async function checkDuplicateEmail(email: string) {
     where: { email },
   });
   return response !== null;
-}
-
-interface UserResponse {
-  user?: { email: string; name: string };
-  error?: string;
 }
 
 // 회원가입
