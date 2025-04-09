@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { MedicationStatus } from "@/constants/types";
 import React, { useState } from "react";
 import ProfileFormInfo from "./ProfileFormInfo";
@@ -8,6 +7,21 @@ type MedicationStatusStepProps = {
   onNext: (medicationStatus: MedicationStatus) => void;
 };
 
+export const medicationOptions: { label: string; value: MedicationStatus }[] = [
+  {
+    label: "네, 복용 중이에요",
+    value: "YES",
+  },
+  {
+    label: "아니요, 복용 중인 약이 없어요",
+    value: "NO",
+  },
+  {
+    label: "기억이 잘 안 나요/애애매해요",
+    value: "UNKNOWN",
+  },
+];
+
 const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
   const [selectedStatus, setSelectedStatus] = useState<MedicationStatus | null>(
     null
@@ -16,21 +30,6 @@ const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
   const handleStatusSelect = (status: MedicationStatus) => {
     setSelectedStatus(status);
   };
-
-  const medicationOptions: { label: string; value: MedicationStatus }[] = [
-    {
-      label: "네 복용 중이에요",
-      value: "YES",
-    },
-    {
-      label: "아니요, 복용 중인 약이 없어요",
-      value: "NO",
-    },
-    {
-      label: "기억이 잘 안 나요/예매해요",
-      value: "UNKNOWN",
-    },
-  ];
 
   const isFormValid = () => {
     return selectedStatus !== null;

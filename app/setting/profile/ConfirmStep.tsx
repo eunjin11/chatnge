@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import Image from "next/image";
 import { ProfileUpdateData } from "@/constants/types";
+import { medicationOptions } from "./MedicationStatusStep";
 
 type ConfirmStepProps = {
   profileData: ProfileUpdateData;
@@ -15,6 +16,10 @@ const ConfirmStep = ({ profileData, onNext }: ConfirmStepProps) => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}.${month}.${day}`;
   };
+
+  const medicationLabel = medicationOptions.find(
+    (option) => option.value === profileData.medicationStatus
+  )?.label;
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-primary p-6">
@@ -73,7 +78,7 @@ const ConfirmStep = ({ profileData, onNext }: ConfirmStepProps) => {
           <p className="text-sm mb-2">복용상태</p>
           <div className="flex items-center border border-primary rounded-full px-4 py-2">
             <div className="w-4 h-4 rounded-full bg-primary mr-2"></div>
-            <span className="text-sm">{profileData.medicationStatus}</span>
+            <span className="text-sm">{medicationLabel}</span>
           </div>
         </div>
       </div>

@@ -27,3 +27,18 @@ export interface UserResponse {
   user?: UserData;
   error?: string;
 }
+
+export interface Profile {
+  email: string;
+  name: string;
+  nickname: string | null;
+  birthdate: Date;
+  status: string | null;
+  motivation: string[];
+  medicationStatus: string;
+}
+
+export interface ProfileResponse {
+  user?: Profile;
+  error?: string;
+}
