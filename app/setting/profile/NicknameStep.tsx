@@ -1,50 +1,48 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import FormButton from "@/components/form/FormButton";
-import { Button } from "@/components/ui/button";
+import ProfileFormInfo from "./ProfileFormInfo";
 
 type NicknameStepProps = {
-  onNext: () => void;
+  onNext: (nickname: string) => void;
 };
 
 const NicknameStep = ({ onNext }: NicknameStepProps) => {
   const [nickname, setNickname] = useState("");
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="flex-1 flex flex-col">
-        <div className="bg-primary p-6 pb-12">
-          <h2 className="text-white text-2xl font-bold mt-16 mb-4">
-            챗인지를 위한 첫 대화,
-            <br />
-            나를 소개해요
-          </h2>
-
-          <div className="bg-primary border-white border-2 rounded-full px-2 inline-block mb-1">
-            <span className="text-white text-xs">1/4</span>
-          </div>
-
-          <div className="mt-4 mx-auto bg-white rounded-lg border-none h-12">
-            <p className="my-auto mx-auto text-[#1E1E1E]">
-              어떤 이름으로 불러드릴까요?
+    <div className="h-screen bg-white">
+      <div className="flex flex-col bg-primary ">
+        <ProfileFormInfo
+          step="1/5"
+          subTitle={"어떤 이름으로 불러드릴까요?"}
+          text={"이 닉네임은 당신을 부를 소중한 이름이에요"}
+        />
+        <div className="flex-1 bg-white rounded-t-3xl flex flex-col">
+          <div className="p-8 my-4 text-gray-800">
+            <input
+              type="text"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              placeholder="닉네임을 입력해주세요"
+              className="w-full focus:outline-none text-sm font-semibold text-[#585858]"
+            />
+            <div className="my-2 border-b-2 border-primary" />
+            <p className="text-xs font-normal">
+              영문,숫자,한글 2-10글자 이내로 입력해주세요
             </p>
           </div>
-
-          <p className="text-white text-xs mt-2 mx-auto">
-            이 닉네임은 챗인지에서 당신을 부를 소중한 이름이 될 거예요.
-          </p>
+          <div className="flex-grow"></div>
+          <div className="px-4 my-8">
+            <FormButton
+              type="button"
+              text="다음"
+              isValid={true}
+              onClick={() => onNext(nickname)}
+            />
+          </div>
         </div>
-        <Input
-          type="text"
-          onChange={(e) => setNickname(e.target.value)}
-          placeholder="닉네임을 입력해주세요"
-          className="my-3 mx-auto w-[250px] text-sm h-[50px] border-[#D9D9D9] border-[1px] rounded-[14px] focus:border-primary focus-visible:ring-0"
-        />
-        <div className="flex-grow"></div>
-        <Button onClick={onNext}>{nickname}</Button>
-        <FormButton type="button" text="다음" isValid={false} />
       </div>
     </div>
   );

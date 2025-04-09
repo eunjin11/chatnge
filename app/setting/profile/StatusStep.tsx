@@ -2,43 +2,37 @@ import FormButton from "@/components/form/FormButton";
 import React, { useState } from "react";
 import ProfileFormInfo from "./ProfileFormInfo";
 
-type MotivationStepProps = {
-  onNext: (motivation: string[]) => void;
+type StepProps = {
+  onNext: (status: string) => void;
 };
 
-const MotivationStep = ({ onNext }: MotivationStepProps) => {
-  const [selectedMotivations, setSelectedMotivations] = useState<string[]>([]);
+const StatusStep = ({ onNext }: StepProps) => {
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const toggleMotivation = (motivation: string) => {
-    if (selectedMotivations.includes(motivation)) {
-      setSelectedMotivations(
-        selectedMotivations.filter((item) => item !== motivation)
-      );
-    } else {
-      setSelectedMotivations([...selectedMotivations, motivation]);
-    }
+  const toggleStatus = (status: string) => {
+    setSelectedStatus(status);
   };
 
   const motivationCategories = [
     {
-      icon: "📁",
-      title: "기록 & 감정 관리",
-      items: ["마음정리", "감정기록", "하루되돌아보기"],
+      icon: "🏫",
+      title: "학습",
+      items: ["초등학생", "중학생", "고등학생", "대학생"],
     },
     {
-      icon: "✏️",
-      title: "약 정보 & 복약 관리",
-      items: ["약효과확인", "약정보검색", "복약알림"],
+      icon: "🏢",
+      title: "직업",
+      items: ["취업준비생", "직장인", "프리랜서"],
     },
     {
-      icon: "⏰",
-      title: "자가 관리 & 도움 요청",
-      items: ["자기관리습관", "조언받고싶어요", "상태체크"],
+      icon: "🏠",
+      title: "가족",
+      items: ["주부", "육아 중이에요", "보호자(부모/교사)"],
     },
     {
-      icon: "❤️",
-      title: "가벼운 관심",
-      items: ["그냥궁금해서", "한번써보려고", "기타"],
+      icon: "👤",
+      title: "기타",
+      items: ["쉬는 중이에요", "말하고 싶지 않아요", "기타"],
     },
   ];
 
@@ -63,11 +57,9 @@ const MotivationStep = ({ onNext }: MotivationStepProps) => {
                     <button
                       key={itemIdx}
                       className={`py-1 px-2 rounded-full border border-primary text-sm ${
-                        selectedMotivations.includes(item)
-                          ? "bg-primary-50"
-                          : "bg-white "
+                        selectedStatus === item ? "bg-primary-50" : "bg-white "
                       }`}
-                      onClick={() => toggleMotivation(item)}
+                      onClick={() => toggleStatus(item)}
                     >
                       #{item}
                     </button>
@@ -81,8 +73,8 @@ const MotivationStep = ({ onNext }: MotivationStepProps) => {
             <FormButton
               type="button"
               text="다음"
-              isValid={selectedMotivations.length > 0}
-              onClick={() => onNext(selectedMotivations)}
+              isValid={selectedStatus !== ""}
+              onClick={() => onNext(selectedStatus)}
             />
           </div>
         </div>
@@ -91,4 +83,4 @@ const MotivationStep = ({ onNext }: MotivationStepProps) => {
   );
 };
 
-export default MotivationStep;
+export default StatusStep;

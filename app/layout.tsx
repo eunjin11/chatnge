@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Noto_Sans_KR } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const notoSansKr = Noto_Sans_KR({
+const notoSansKr = localFont({
+  src: "../public/NotoSansKR-VariableFont_wght.ttf",
+  display: "swap",
+  weight: "45 920",
   variable: "--font-noto-sans-kr",
-  subsets: ["latin"],
-  weight: ["100", "400", "700", "900"],
 });
 
 export const metadata: Metadata = {

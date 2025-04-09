@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import { signup } from "../api/fetchAuth";
 import InfoStep from "./InfoStep";
 import PWStep from "./PWStep";
+import { SignUpStep } from "@/constants/types";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const SignUpPage = () => {
     email: "",
     name: "",
   });
-  const [step, setStep] = useState<"정보 입력" | "비밀번호 입력">("정보 입력");
+  const [step, setStep] = useState<SignUpStep>("정보 입력");
 
   const handleNextStep = (email: string, name: string) => {
     setRegisterData((prev) => ({ ...prev, email, name }));
