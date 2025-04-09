@@ -27,6 +27,7 @@ const ProfileSettingPage = () => {
 
   const updateNickname = async (nickname: string) => {
     setRegisterData((prev) => ({ ...prev, nickname }));
+    console.log(registerData);
     setStep("생일");
   };
 
@@ -34,21 +35,25 @@ const ProfileSettingPage = () => {
     const newBirthdate = isNaN(new Date(birthdate).getTime())
       ? new Date()
       : new Date(birthdate);
-    setRegisterData((prev) => ({ ...prev, newBirthdate }));
+    setRegisterData((prev) => ({ ...prev, birthdate: newBirthdate }));
+    console.log(registerData);
     setStep("계기");
   };
 
   const updateMotivation = async (motivation: string[]) => {
     setRegisterData((prev) => ({ ...prev, motivation }));
+    console.log(registerData);
     setStep("복용 여부");
   };
 
   const updateMedicationStatus = async (medicationStatus: MedicationStatus) => {
     setRegisterData((prev) => ({ ...prev, medicationStatus }));
+    console.log(registerData);
     setStep("확인");
   };
 
   const handleProfileUpdate = async () => {
+    console.log(registerData);
     try {
       const result = await updateProfile({
         nickname: registerData.nickname,
@@ -80,10 +85,16 @@ const ProfileSettingPage = () => {
         />
       )}
       {step === "계기" && (
-        <MotivationStep onNext={() => setStep("복용 여부")} />
+        <MotivationStep
+          onNext={(motivation: string[]) => updateMotivation(motivation)}
+        />
       )}
       {step === "복용 여부" && (
-        <MedicationStatusStep onNext={() => setStep("확인")} />
+        <MedicationStatusStep
+          onNext={(medicationStatus: MedicationStatus) =>
+            updateMedicationStatus(medicationStatus)
+          }
+        />
       )}
       {step === "확인" && <ConfirmStep onNext={() => handleProfileUpdate()} />}
     </>
