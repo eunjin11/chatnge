@@ -1,6 +1,7 @@
-export type PrifleUpdateStep =
+export type ProfileUpdateStep =
   | "닉네임"
   | "생일"
+  | "상태"
   | "계기"
   | "복용 여부"
   | "확인";
@@ -10,10 +11,11 @@ export type SignUpStep = "정보 입력" | "비밀번호 입력";
 export type MedicationStatus = "YES" | "NO" | "UNKNOWN";
 
 export interface ProfileUpdateData {
-  nickname?: string;
-  birthdate?: Date;
-  motivation?: string[];
-  medicationStatus?: MedicationStatus;
+  nickname: string;
+  birthdate: Date;
+  status: string;
+  motivation: string[];
+  medicationStatus: MedicationStatus;
 }
 
 export interface UserData {

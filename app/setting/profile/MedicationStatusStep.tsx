@@ -40,7 +40,7 @@ const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
     <div className="h-screen bg-white">
       <div className="flex flex-col bg-primary h-full">
         <ProfileFormInfo
-          step="3/5"
+          step="4/5"
           subTitle={"현재 복용 중인 약이 있으신가요?"}
           text={"더 나은 건강 관리를 위해 알려주세요."}
         />
@@ -53,7 +53,7 @@ const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
                   key={idx}
                   className={`flex items-center px-4 py-2 border rounded-xl cursor-pointer ${
                     selectedStatus === option.value
-                      ? "border-primary bg-primary"
+                      ? "border-primary bg-white"
                       : "border-gray-200"
                   }`}
                   onClick={() => handleStatusSelect(option.value)}
@@ -61,7 +61,7 @@ const MedicationStatusStep = ({ onNext }: MedicationStatusStepProps) => {
                   <div
                     className={`w-5 h-5 flex-shrink-0 rounded-full border ${
                       selectedStatus === option.value
-                        ? "border-4 border-primary"
+                        ? "bg-primary"
                         : "border border-gray-300"
                     }`}
                   />

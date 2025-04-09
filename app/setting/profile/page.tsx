@@ -9,18 +9,22 @@ import MotivationStep from "./MotivationStep";
 import MedicationStatusStep from "./MedicationStatusStep";
 import ConfirmStep from "./ConfirmStep";
 import { updateProfile } from "@/app/api/fetchAuth";
-import { MedicationStatus, ProfileUpdateData } from "@/constants/types";
+import {
+  MedicationStatus,
+  ProfileUpdateData,
+  ProfileUpdateStep,
+} from "@/constants/types";
+import StatusStep from "./StatusStep";
 
 const ProfileSettingPage = () => {
   const router = useRouter();
 
-  const [step, setStep] = useState<
-    "닉네임" | "생일" | "계기" | "복용 여부" | "확인"
-  >("닉네임");
+  const [step, setStep] = useState<ProfileUpdateStep>("닉네임");
 
   const [registerData, setRegisterData] = useState<ProfileUpdateData>({
     nickname: "",
     birthdate: new Date(),
+    status: "",
     motivation: [],
     medicationStatus: "UNKNOWN",
   });
@@ -36,6 +40,12 @@ const ProfileSettingPage = () => {
       ? new Date()
       : new Date(birthdate);
     setRegisterData((prev) => ({ ...prev, birthdate: newBirthdate }));
+    console.log(registerData);
+    setStep("상태");
+  };
+
+  const updateStatus = async (status: string) => {
+    setRegisterData((prev) => ({ ...prev, status }));
     console.log(registerData);
     setStep("계기");
   };
@@ -58,6 +68,7 @@ const ProfileSettingPage = () => {
       const result = await updateProfile({
         nickname: registerData.nickname,
         birthdate: registerData.birthdate ? registerData.birthdate : new Date(),
+        status: registerData.status,
         motivation: registerData.motivation,
         medicationStatus: registerData.medicationStatus,
       });
@@ -75,7 +86,7 @@ const ProfileSettingPage = () => {
 
   return (
     <>
-      <Header title="프로필" />
+      {/* <Header title="프로필" /> */}
       {step === "닉네임" && (
         <NicknameStep onNext={(nickname: string) => updateNickname(nickname)} />
       )}
@@ -83,6 +94,9 @@ const ProfileSettingPage = () => {
         <BirthDateStep
           onNext={(birthdate: string) => updateBirthdate(birthdate)}
         />
+      )}
+      {step === "상태" && (
+        <StatusStep onNext={(status: string) => updateStatus(status)} />
       )}
       {step === "계기" && (
         <MotivationStep
@@ -96,7 +110,12 @@ const ProfileSettingPage = () => {
           }
         />
       )}
-      {step === "확인" && <ConfirmStep onNext={() => handleProfileUpdate()} />}
+      {step === "확인" && (
+        <ConfirmStep
+          profileData={registerData}
+          onNext={() => handleProfileUpdate()}
+        />
+      )}
     </>
   );
 };
