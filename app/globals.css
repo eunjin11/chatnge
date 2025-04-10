@@ -18,4 +18,20 @@
 
 body {
   font-family: var(--font-noto-sans-kr), sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.emoji-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.emoji-container-item {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
 }
