@@ -7,7 +7,7 @@ interface TabNavigationProps {
 
 const TabNavigation = ({ activeTab, onTabChange }: TabNavigationProps) => {
   return (
-    <div className="fixed top-18 left-0 right-0 bg-white border-b border-gray-200 py-2 px-8 flex-1 flex space-x-12 max-w-md mx-auto">
+    <div className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 pt-4 pb-2 px-8 flex-1 flex space-x-12 max-w-md mx-auto">
       <button
         className={`${
           activeTab === "recent"

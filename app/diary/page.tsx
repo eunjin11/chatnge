@@ -11,6 +11,7 @@ import TabNavigation from "@/components/TabNavigation";
 import DiaryCard from "@/components/DiaryCard";
 import MindLog from "@/components/MindLog";
 import MonthResolution from "@/components/MonthResolution";
+
 export default function DiaryPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
@@ -20,7 +21,7 @@ export default function DiaryPage() {
   const [weekDates, setWeekDates] = useState<
     {
       date: string;
-      emoji: string;
+      emotion: string;
       fullDate: string;
       dayOfWeek: string;
     }[]
@@ -47,10 +48,10 @@ export default function DiaryPage() {
       date.setDate(sunday.getDate() + i);
       const formattedDate = formatDate(date);
       const fullDate = formatFullDate(date);
-      const emoji = "😄";
+      const emotion = "Happy";
       const dayOfWeek = daysOfWeek[i];
 
-      dates.push({ date: formattedDate, emoji, fullDate, dayOfWeek });
+      dates.push({ date: formattedDate, emotion, fullDate, dayOfWeek });
     }
 
     setWeekDates(dates);
@@ -95,7 +96,7 @@ export default function DiaryPage() {
             />
           </div>
           <div className="emoji-container mt-2">
-            {weekDates.map(({ date, emoji, fullDate, dayOfWeek }) => (
+            {weekDates.map(({ date, emotion, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}
                 onClick={() => router.push(`/diary/${fullDate}`)}
@@ -103,8 +104,14 @@ export default function DiaryPage() {
               >
                 <div className="flex flex-col items-center">
                   <span className="text-sm mt-1">{dayOfWeek}</span>
-                  <span className="text-xl">{emoji}</span>
-                  <span className="text-[10px] mt-1">{date}</span>
+                  <Image
+                    src={`/${emotion}.png`}
+                    alt="{happy}"
+                    width={40}
+                    height={34}
+                    className="w-[40px] h-[34px]"
+                  />
+                  <span className="text-[10px] mt-1 text-gray-500">{date}</span>
                 </div>
               </button>
             ))}

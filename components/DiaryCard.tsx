@@ -9,7 +9,7 @@ interface DiaryCardProps {
 function DiaryCard({ type, title, description }: DiaryCardProps) {
   return (
     <div
-      className={`rounded-[20px] p-4 w-[48%] h-[180px] flex flex-col shadow-lg relative ${
+      className={`rounded-[20px] p-4 w-[48%] h-[180px] flex flex-col shadow-lg ${
         type === "emotion" ? "bg-primary text-white" : "bg-white"
       }`}
     >
@@ -22,7 +22,7 @@ function DiaryCard({ type, title, description }: DiaryCardProps) {
         {description}
       </p>
       {type === "medication" && (
-        <div className="absolute bottom-4 right-4">
+        <div className="flex items-end justify-end mt-auto">
           <Image
             src="/MedicationCheckCharacter.png"
             alt="diary-card"
