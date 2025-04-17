@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 import BottomNaviation from "@/components/BottomNaviation";
+import { formatDate } from "@/utils/formatDate";
+import { formatFullDate } from "@/utils/formatFullDate";
+import TabNavigation from "@/components/TabNavigation";
+import DiaryCard from "@/components/DiaryCard";
 
 export default function DiaryPage() {
   const router = useRouter();
@@ -29,21 +34,6 @@ export default function DiaryPage() {
     const saturday = new Date(sunday);
     saturday.setDate(sunday.getDate() + 6); // 이번주 토요일
 
-    // MM.DD 형식으로 포맷팅
-    const formatDate = (date: Date) => {
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${month}.${day}`;
-    };
-
-    // YYYY-MM-DD 형식으로 포맷팅 (URL 용)
-    const formatFullDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-
     setDateRange(`${formatDate(sunday)} - ${formatDate(saturday)}`);
 
     // 이번주 일~토요일까지의 날짜 배열 생성
@@ -62,65 +52,34 @@ export default function DiaryPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* 헤더 */}
-      <header className="flex items-center p-4 border-b">
-        <Header title={"기록"} />
-        <div className="fixed top-18 left-0 right-0 bg-white border-b border-gray-200 pb-2 flex-1 flex justify-center space-x-6">
-          <button
-            className={`${
-              activeTab === "recent"
-                ? "text-black border-b-2 border-black"
-                : "text-gray-400"
-            }`}
-            onClick={() => setActiveTab("recent")}
-          >
-            전체
-          </button>
-          <button
-            className={`${
-              activeTab === "emotion"
-                ? "text-black border-b-2 border-black"
-                : "text-gray-400"
-            }`}
-            onClick={() => setActiveTab("emotion")}
-          >
-            감정 기록
-          </button>
-          <button
-            className={`${
-              activeTab === "medication"
-                ? "text-black border-b-2 border-black"
-                : "text-gray-400"
-            }`}
-            onClick={() => setActiveTab("medication")}
-          >
-            복약 기록
-          </button>
-        </div>
-      </header>
+    <div className="flex flex-col mt-14">
+      <Header
+        title={"기록"}
+        subHeader={
+          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+        }
+      />
 
       {/* 일기 컨텐츠 */}
       <div className="mt-14 flex-1 overflow-y-auto p-4">
-        <div className="text-primary my-2 text-xs">이번 달 다짐</div>
+        <div className="text-primary my-2 text-xs font-bold flex items-center space-x-1">
+          <div>이번 달 다짐</div>
+          <Image src="/Edit.svg" alt="edit" width={12} height={12} />
+        </div>
         <h1 className="text-xl font-bold mb-4">프로젝트 무사히 끝내기!</h1>
 
         {/* 감정 카드 영역 */}
         <div className="flex justify-between mb-4">
-          <div className="bg-primary rounded-[20px] p-4 w-[48%] flex flex-col items-center text-white shadow-lg">
-            <p className="text-center font-bold mb-2 text-sm">
-              오늘의 기분을 기록하고 싶다면?
-            </p>
-            <p className="text-center text-xs">{`> 챗인지와 함께 기록하기`}</p>
-          </div>
-          <div className="bg-primary-50 rounded-[20px] p-4 w-[48%] flex flex-col items-center shadow-lg">
-            <p className="text-center font-bold mb-2 text-sm">
-              하루 한 번, 오늘의 약 점검!
-            </p>
-            <p className="text-center text-xs text-gray-600">
-              {`> 챗인지와 함께 기록하기`}
-            </p>
-          </div>
+          <DiaryCard
+            type="emotion"
+            title={`오늘의 기분을\n기록하고 싶다면?`}
+            description="> 챗인지와 함께 기록하기"
+          />
+          <DiaryCard
+            type="medication"
+            title={`하루 한 번,\n오늘의 약 점검!`}
+            description="> 챗인지와 함께 기록하기"
+          />
         </div>
 
         {/* 날짜 및 이모지 선택 */}
