@@ -9,7 +9,8 @@ import { formatDate } from "@/utils/formatDate";
 import { formatFullDate } from "@/utils/formatFullDate";
 import TabNavigation from "@/components/TabNavigation";
 import DiaryCard from "@/components/DiaryCard";
-
+import MindLog from "@/components/MindLog";
+import MonthResolution from "@/components/MonthResolution";
 export default function DiaryPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
@@ -56,7 +57,7 @@ export default function DiaryPage() {
   }, []);
 
   return (
-    <div className="flex flex-col mt-14">
+    <div className="flex flex-col min-h-screen">
       <Header
         title={"기록"}
         subHeader={
@@ -65,13 +66,8 @@ export default function DiaryPage() {
       />
 
       {/* 일기 컨텐츠 */}
-      <div className="mt-14 flex-1 overflow-y-auto p-4">
-        <div className="text-primary my-2 text-xs font-bold flex items-center space-x-1">
-          <div>이번 달 다짐</div>
-          <Image src="/Edit.svg" alt="edit" width={12} height={12} />
-        </div>
-        <h1 className="text-xl font-bold mb-4">프로젝트 무사히 끝내기!</h1>
-
+      <div className="flex-1 overflow-y-auto p-4 pb-20 mt-28">
+        <MonthResolution />
         {/* 감정 카드 영역 */}
         <div className="flex justify-between mb-4">
           <DiaryCard
@@ -98,7 +94,6 @@ export default function DiaryPage() {
               className="w-[8px] h-[10px] align-middle"
             />
           </div>
-
           <div className="emoji-container mt-2">
             {weekDates.map(({ date, emoji, fullDate, dayOfWeek }) => (
               <button
@@ -117,56 +112,7 @@ export default function DiaryPage() {
         </div>
 
         {/* 마인드 로그 */}
-        <div className="m-2 border border-gray-200 rounded-[20px] p-4 shadow-lg">
-          <h2 className="font-bold mb-2">마인드 로그</h2>
-          <div className="flex space-x-2 my-2">
-            <button className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-              최근 기록
-            </button>
-            <button className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-              매우 좋아요
-            </button>
-            <button className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-              최근 일주일
-            </button>
-          </div>
-          {/* 리스트 아이템 */}
-          {[1, 2, 3].map((item) => (
-            <div
-              key={item}
-              className="flex items-center mb-4 border border-gray-200 rounded-lg p-3"
-            >
-              <div className="bg-gray-200 p-2 rounded-lg mr-3">
-                <div className="w-6 h-6 bg-gray-300 rounded"></div>
-              </div>
-              <div className="flex-1">
-                <div className="text-sm text-gray-500">
-                  Category • 1.2 miles away
-                </div>
-                <div className="font-medium">List item</div>
-                <div className="text-sm text-gray-500">
-                  Supporting line text
-                </div>
-              </div>
-              <button className="ml-2">
-                <svg
-                  className="w-6 h-6 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
+        <MindLog />
       </div>
       <BottomNaviation />
     </div>
