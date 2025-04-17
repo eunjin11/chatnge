@@ -21,6 +21,7 @@ export default function DiaryPage() {
       date: string;
       emoji: string;
       fullDate: string;
+      dayOfWeek: string;
     }[]
   >([]);
 
@@ -38,14 +39,17 @@ export default function DiaryPage() {
 
     // 이번주 일~토요일까지의 날짜 배열 생성
     const dates = [];
+    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+
     for (let i = 0; i < 7; i++) {
       const date = new Date(sunday);
       date.setDate(sunday.getDate() + i);
       const formattedDate = formatDate(date);
       const fullDate = formatFullDate(date);
       const emoji = "😄";
+      const dayOfWeek = daysOfWeek[i];
 
-      dates.push({ date: formattedDate, emoji, fullDate });
+      dates.push({ date: formattedDate, emoji, fullDate, dayOfWeek });
     }
 
     setWeekDates(dates);
@@ -84,27 +88,28 @@ export default function DiaryPage() {
 
         {/* 날짜 및 이모지 선택 */}
         <div className="mb-8">
-          <div className="text-center mb-2">{dateRange}</div>
-          <div className="flex justify-between items-center">
-            <div className="text-center w-8">일</div>
-            <div className="text-center w-8">월</div>
-            <div className="text-center w-8">화</div>
-            <div className="text-center w-8">수</div>
-            <div className="text-center w-8">목</div>
-            <div className="text-center w-8">금</div>
-            <div className="text-center w-8">토</div>
+          <div className="mx-2 text-sm flex items-center gap-1">
+            <div>{dateRange}</div>
+            <Image
+              src="/ArrowRight.svg"
+              alt="full diary"
+              width={8}
+              height={10}
+              className="w-[8px] h-[10px] align-middle"
+            />
           </div>
 
           <div className="emoji-container mt-2">
-            {weekDates.map(({ date, emoji, fullDate }) => (
+            {weekDates.map(({ date, emoji, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}
                 onClick={() => router.push(`/diary/${fullDate}`)}
                 className={`emoji-container-item`}
               >
                 <div className="flex flex-col items-center">
+                  <span className="text-sm mt-1">{dayOfWeek}</span>
                   <span className="text-xl">{emoji}</span>
-                  <span className="text-xs mt-1">{date}</span>
+                  <span className="text-[10px] mt-1">{date}</span>
                 </div>
               </button>
             ))}
