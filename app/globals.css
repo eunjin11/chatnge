@@ -23,14 +23,6 @@ body {
   color: #000000;
 }
 
-.emoji-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin: 0.5rem 0;
-}
-
 .emoji-container-item {
   flex: 1;
   text-align: center;
@@ -78,20 +70,4 @@ body {
   background-color: var(--color-primary-10);
   margin-right: auto;
   border-bottom-left-radius: 0;
-}
-
-.emotion-button {
-  display: flex;
-  align-items: center;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 1rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
-}
-
-.emotion-button:hover {
-  background-color: #f9fafb;
 }

@@ -48,7 +48,7 @@ export default function DiaryPage() {
       date.setDate(sunday.getDate() + i);
       const formattedDate = formatDate(date);
       const fullDate = formatFullDate(date);
-      const emotion = "Happy";
+      const emotion = "None";
       const dayOfWeek = daysOfWeek[i];
 
       dates.push({ date: formattedDate, emotion, fullDate, dayOfWeek });
@@ -95,7 +95,7 @@ export default function DiaryPage() {
               className="w-[8px] h-[10px] align-middle"
             />
           </div>
-          <div className="emoji-container mt-2">
+          <div className="emoji-container">
             {weekDates.map(({ date, emotion, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}
@@ -103,14 +103,21 @@ export default function DiaryPage() {
                 className={`emoji-container-item`}
               >
                 <div className="flex flex-col items-center">
-                  <span className="text-sm mt-1">{dayOfWeek}</span>
-                  <Image
-                    src={`/${emotion}.png`}
-                    alt="{happy}"
-                    width={40}
-                    height={34}
-                    className="w-[40px] h-[34px]"
-                  />
+                  <span className="text-sm my-1">{dayOfWeek}</span>
+                  {emotion === "None" ? (
+                    <div className="w-[35px] h-[35px] bg-[#D9D9D9] rounded-[10px] text-2xl flex items-center justify-center font-extrabold text-gray-600">
+                      <div>+</div>
+                    </div>
+                  ) : (
+                    <Image
+                      src={`/${emotion}.png`}
+                      alt="{happy}"
+                      width={40}
+                      height={34}
+                      className="w-[40px] h-[34px]"
+                    />
+                  )}
+
                   <span className="text-[10px] mt-1 text-gray-500">{date}</span>
                 </div>
               </button>
