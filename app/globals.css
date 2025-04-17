@@ -13,9 +13,61 @@
   --color-foreground: #000000;
   --color-primary: #36d0d3;
   --color-primary-50: #86e3e5;
+  --color-primary-10: #d7f8f8;
   --font-noto-sans-kr: "NotoSansKR Variable", sans-serif;
 }
 
 body {
   font-family: var(--font-noto-sans-kr), sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.emoji-container-item {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.emoji-slider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.emoji-slider-item {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.emoji-slider-item.active {
+  transform: scale(1.2);
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+/* 채팅 스타일 */
+.chat-bubble {
+  position: relative;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  max-width: 80%;
+  margin-bottom: 0.5rem;
+}
+
+.chat-bubble-user {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-left: auto;
+  border-bottom-right-radius: 0;
+}
+
+.chat-bubble-bot {
+  background-color: var(--color-primary-10);
+  margin-right: auto;
+  border-bottom-left-radius: 0;
 }
