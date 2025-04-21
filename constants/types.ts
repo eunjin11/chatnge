@@ -42,3 +42,26 @@ export interface ProfileResponse {
   user?: Profile;
   error?: string;
 }
+
+export interface EmotionData {
+  userEmail: string;
+  emotion: string;
+  date: Date;
+  reason: string;
+  feeling: string;
+  detailedEmotions: string[];
+  aiSummary?: string;
+}
+
+export interface EmotionResponse {
+  id: number;
+  userEmail: string;
+  emotion: string;
+  date: Date;
+  reason: string | null;
+  feeling: string | null;
+  detailedEmotions: string[];
+  aiSummary?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

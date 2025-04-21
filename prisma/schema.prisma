@@ -35,8 +35,8 @@ model EmotionRecord {
   userEmail        String
   date             DateTime
   emotion          String
-  reason           String?
-  feeling          String?
+  reason           String
+  feeling          String
   detailedEmotions String[]          @default([])
   aiSummary        String?
   createdAt        DateTime          @default(now())
