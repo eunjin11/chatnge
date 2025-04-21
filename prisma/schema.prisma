@@ -38,6 +38,7 @@ model EmotionRecord {
   reason           String
   feeling          String
   detailedEmotions String[]          @default([])
+  oneLineRecord    String
   aiSummary        String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt

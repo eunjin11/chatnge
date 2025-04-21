@@ -50,6 +50,7 @@ export interface EmotionData {
   reason: string;
   feeling: string;
   detailedEmotions: string[];
+  oneLineRecord: string;
   aiSummary?: string;
 }
 
@@ -61,6 +62,7 @@ export interface EmotionResponse {
   reason: string | null;
   feeling: string | null;
   detailedEmotions: string[];
+  oneLineRecord?: string | null;
   aiSummary?: string | null;
   createdAt: Date;
   updatedAt: Date;
