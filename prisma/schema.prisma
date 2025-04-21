@@ -27,4 +27,22 @@ model User {
   updatedAt       DateTime @updatedAt
 
   @@map("users")
+  EmotionRecord   EmotionRecord[]
+}
+
+model EmotionRecord {
+  id               Int               @id @default(autoincrement())
+  userEmail        String
+  date             DateTime
+  emotion          String
+  reason           String
+  feeling          String
+  detailedEmotions String[]          @default([])
+  oneLineRecord    String
+  aiSummary        String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  user             User @relation(fields: [userEmail], references: [email])
+  @@map("emotion_records")
 }
