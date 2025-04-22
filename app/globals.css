@@ -14,6 +14,17 @@
   --color-primary: #36d0d3;
   --color-primary-50: #86e3e5;
   --color-primary-10: #d7f8f8;
+
+  /* 감정별 색상 */
+  --color-emotion-joy: #ffd95a;
+  --color-emotion-calm: #a3e4d7;
+  --color-emotion-depression: #90caf9;
+  --color-emotion-anxiety: #5c6bc0;
+  --color-emotion-anger: #ef5350;
+  --color-emotion-fatigue: #b0bec5;
+  --color-emotion-mixed: #ce93d8;
+
+  /* 폰트 */
   --font-noto-sans-kr: "NotoSansKR Variable", sans-serif;
 }
 

@@ -31,6 +31,57 @@ enum EmotionSelectionState {
   MIND_REPORT = "MIND_REPORT",
 }
 
+type DetailedEmotion =
+  | "joy"
+  | "calm"
+  | "depression"
+  | "anxiety"
+  | "anger"
+  | "fatigue"
+  | "mixed";
+
+const emotionColorVariants: Record<
+  DetailedEmotion,
+  {
+    base: string;
+    active: string;
+  }
+> = {
+  joy: {
+    base: "text-emotion-joy hover:bg-emotion-joy hover:text-white active:bg-emotion-joy active:text-white",
+    active: "bg-emotion-joy text-white",
+  },
+  calm: {
+    base: "text-emotion-calm hover:bg-emotion-calm hover:text-white active:bg-emotion-calm active:text-white",
+    active: "bg-emotion-calm text-white",
+  },
+  depression: {
+    base: "text-emotion-depression hover:bg-emotion-depression hover:text-white active:bg-emotion-depression active:text-white",
+    active: "bg-emotion-depression text-white",
+  },
+  anxiety: {
+    base: "text-emotion-anxiety hover:bg-emotion-anxiety hover:text-white active:bg-emotion-anxiety active:text-white",
+    active: "bg-emotion-anxiety text-white",
+  },
+  anger: {
+    base: "text-emotion-anger hover:bg-emotion-anger hover:text-white active:bg-emotion-anger active:text-white",
+    active: "bg-emotion-anger text-white",
+  },
+  fatigue: {
+    base: "text-emotion-fatigue hover:bg-emotion-fatigue hover:text-white active:bg-emotion-fatigue active:text-white",
+    active: "bg-emotion-fatigue text-white",
+  },
+  mixed: {
+    base: "text-emotion-mixed hover:bg-emotion-mixed hover:text-white active:bg-emotion-mixed active:text-white",
+    active: "bg-emotion-mixed text-white",
+  },
+};
+
+interface DetailedFeeling {
+  text: string;
+  emotion: DetailedEmotion;
+}
+
 export default function DiaryDatePage() {
   const params = useParams();
   const router = useRouter();
@@ -134,6 +185,28 @@ export default function DiaryDatePage() {
     "잘 모르겠어요",
   ];
 
+  const detailedFeelingOptions: DetailedFeeling[] = [
+    { text: "기쁨", emotion: "joy" },
+    { text: "자신감", emotion: "joy" },
+    { text: "설렘", emotion: "joy" },
+    { text: "불안", emotion: "anxiety" },
+    { text: "걱정", emotion: "anxiety" },
+    { text: "차분함", emotion: "calm" },
+    { text: "편안함", emotion: "calm" },
+    { text: "분노", emotion: "anger" },
+    { text: "짜증", emotion: "anger" },
+    { text: "피곤함", emotion: "fatigue" },
+    { text: "무기력", emotion: "fatigue" },
+    { text: "복잡함", emotion: "mixed" },
+    { text: "답답", emotion: "mixed" },
+    { text: "외로움", emotion: "depression" },
+    { text: "슬픔", emotion: "depression" },
+  ];
+
+  const [userDetailedFeelings, setUserDetailedFeelings] = useState<
+    DetailedFeeling[]
+  >([]);
+
   useEffect(() => {
     if (typeof date === "string") {
       // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
@@ -204,6 +277,19 @@ export default function DiaryDatePage() {
       },
     ]);
     setSelectionState(EmotionSelectionState.SELECTING_DETAILED_EMOTIONS);
+  };
+
+  const toggleDetailedFeeling = (feeling: DetailedFeeling) => {
+    const isSelected = userDetailedFeelings.some(
+      (f) => f.text === feeling.text && f.emotion === feeling.emotion
+    );
+    if (isSelected) {
+      setUserDetailedFeelings((prev) =>
+        prev.filter((f) => f.text !== feeling.text)
+      );
+    } else {
+      setUserDetailedFeelings((prev) => [...prev, feeling]);
+    }
   };
 
   return (
@@ -284,20 +370,49 @@ export default function DiaryDatePage() {
           )}
           {selectionState === EmotionSelectionState.SELECTING_FEELING && (
             <div className="flex flex-col items-end space-y-2">
-              {feelingSelections.map((detail, index) => (
+              {feelingSelections.map((feeling, index) => (
                 <button
                   key={index}
-                  onClick={() => handleFeelingSelect(detail)}
+                  onClick={() => handleFeelingSelect(feeling)}
                   className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
                 >
-                  <span className="text-sm">{detail}</span>
+                  <span className="text-sm">{feeling}</span>
                 </button>
               ))}
             </div>
           )}
           {selectionState ===
             EmotionSelectionState.SELECTING_DETAILED_EMOTIONS && (
-            <div>세부 감정 기록</div>
+            <div className="w-full flex justify-end">
+              <div className="flex flex-wrap gap-2 w-[90%] justify-end">
+                {detailedFeelingOptions.map((detailedFeeling, index) => {
+                  const isSelected = userDetailedFeelings.some(
+                    (f) => f.text === detailedFeeling.text
+                  );
+                  const isMaxSelected = userDetailedFeelings.length >= 3;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => toggleDetailedFeeling(detailedFeeling)}
+                      disabled={isMaxSelected && !isSelected}
+                      className={`text-sm border border-gray-200 rounded-[15px] px-4 py-2 shadow-sm ${
+                        emotionColorVariants[detailedFeeling.emotion].base
+                      } ${
+                        isSelected
+                          ? emotionColorVariants[detailedFeeling.emotion].active
+                          : ""
+                      } ${
+                        isMaxSelected && !isSelected
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      <span>#{detailedFeeling.text}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
           {selectionState === EmotionSelectionState.INPUT_ONE_LINE_DIARY && (
             <div>한줄 감정 기록</div>
@@ -306,7 +421,7 @@ export default function DiaryDatePage() {
       </div>
 
       {/* 하단 네비게이션 */}
-      <div className="fixed bottom-0 left-0 right-0 flex justify-between p-4 rounded-t-[20px] border-t border-gray-200 bg-white shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-between p-4 rounded-t-[20px] border-t border-gray-200 bg-white shadow-lg">
         <button className="text-primary">
           <ChevronLeft size={24} />
         </button>
