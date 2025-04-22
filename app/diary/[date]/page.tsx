@@ -20,9 +20,7 @@ interface Message {
   emoji?: string;
 }
 
-// 감정 선택 상태 정의
-enum EmotionSelectionState {
-  BEFORE_SELECTION = "BEFORE_SELECTION",
+enum EmotionSelectiomStep {
   SELECTING_EMOTION = "SELECTING_EMOTION",
   SELECTING_DETAIL = "SELECTING_DETAIL",
   SELECTING_FEELING = "SELECTING_FEELING",
@@ -104,8 +102,8 @@ export default function DiaryDatePage() {
     }
   }, [messages]);
 
-  const [selectionState, setSelectionState] = useState<EmotionSelectionState>(
-    EmotionSelectionState.BEFORE_SELECTION
+  const [selectionStep, setSelectionStep] = useState<EmotionSelectiomStep>(
+    EmotionSelectiomStep.SELECTING_EMOTION
   );
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
   const [userEmotions] = useState<Emotion[]>([
@@ -175,8 +173,8 @@ export default function DiaryDatePage() {
       ],
     },
   ]);
-
-  const [userFeeling, setUserFeeling] = useState<string>();
+  const [selectedDetail, setSelectedDetail] = useState<string>();
+  const [selectedFeeling, setSelectedFeeling] = useState<string>();
 
   const feelingSelections = [
     "하루 종일 비슷했어요",
@@ -234,10 +232,11 @@ export default function DiaryDatePage() {
         isUser: false,
       },
     ]);
-    setSelectionState(EmotionSelectionState.SELECTING_DETAIL);
+    setSelectionStep(EmotionSelectiomStep.SELECTING_DETAIL);
   };
 
   const handleDetailSelect = (detail: string) => {
+    setSelectedDetail(detail);
     setMessages([
       ...messages,
       {
@@ -252,11 +251,11 @@ export default function DiaryDatePage() {
         isUser: false,
       },
     ]);
-    setSelectionState(EmotionSelectionState.SELECTING_FEELING);
+    setSelectionStep(EmotionSelectiomStep.SELECTING_FEELING);
   };
 
   const handleFeelingSelect = (feeling: string) => {
-    setUserFeeling(feeling);
+    setSelectedFeeling(feeling);
     setMessages([
       ...messages,
       {
@@ -276,7 +275,7 @@ export default function DiaryDatePage() {
         isUser: false,
       },
     ]);
-    setSelectionState(EmotionSelectionState.SELECTING_DETAILED_EMOTIONS);
+    setSelectionStep(EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS);
   };
 
   const toggleDetailedFeeling = (feeling: DetailedFeeling) => {
@@ -289,6 +288,67 @@ export default function DiaryDatePage() {
       );
     } else {
       setUserDetailedFeelings((prev) => [...prev, feeling]);
+    }
+  };
+
+  const isNextStepEnabled = () => {
+    switch (selectionStep) {
+      case EmotionSelectiomStep.SELECTING_EMOTION:
+        return !!selectedEmotion;
+      case EmotionSelectiomStep.SELECTING_DETAIL:
+        return !!selectedDetail;
+      case EmotionSelectiomStep.SELECTING_FEELING:
+        return !!selectedFeeling;
+      case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
+        return userDetailedFeelings.length >= 1;
+      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const goToPrevStep = () => {
+    switch (selectionStep) {
+      case EmotionSelectiomStep.SELECTING_DETAIL:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_EMOTION);
+        break;
+      case EmotionSelectiomStep.SELECTING_FEELING:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_DETAIL);
+        break;
+      case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_FEELING);
+        break;
+      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS);
+        break;
+      case EmotionSelectiomStep.MIND_REPORT:
+        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_DIARY);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const goToNextStep = () => {
+    switch (selectionStep) {
+      case EmotionSelectiomStep.SELECTING_EMOTION:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_DETAIL);
+        break;
+      case EmotionSelectiomStep.SELECTING_DETAIL:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_FEELING);
+        break;
+      case EmotionSelectiomStep.SELECTING_FEELING:
+        setSelectionStep(EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS);
+        break;
+      case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
+        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_DIARY);
+        break;
+      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+        setSelectionStep(EmotionSelectiomStep.MIND_REPORT);
+        break;
+      default:
+        break;
     }
   };
 
@@ -341,7 +401,7 @@ export default function DiaryDatePage() {
 
         {/* 감정 선택 영역 */}
         <div className="p-4 mb-14" ref={chatContainerRef}>
-          {selectionState === EmotionSelectionState.BEFORE_SELECTION && (
+          {selectionStep === EmotionSelectiomStep.SELECTING_EMOTION && (
             <div className="flex flex-col items-end space-y-2">
               {userEmotions.map((emotion) => (
                 <button
@@ -355,7 +415,7 @@ export default function DiaryDatePage() {
               ))}
             </div>
           )}
-          {selectionState === EmotionSelectionState.SELECTING_DETAIL && (
+          {selectionStep === EmotionSelectiomStep.SELECTING_DETAIL && (
             <div className="flex flex-col items-end space-y-2">
               {selectedEmotion?.details?.map((detail, index) => (
                 <button
@@ -368,7 +428,7 @@ export default function DiaryDatePage() {
               ))}
             </div>
           )}
-          {selectionState === EmotionSelectionState.SELECTING_FEELING && (
+          {selectionStep === EmotionSelectiomStep.SELECTING_FEELING && (
             <div className="flex flex-col items-end space-y-2">
               {feelingSelections.map((feeling, index) => (
                 <button
@@ -381,8 +441,8 @@ export default function DiaryDatePage() {
               ))}
             </div>
           )}
-          {selectionState ===
-            EmotionSelectionState.SELECTING_DETAILED_EMOTIONS && (
+          {selectionStep ===
+            EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS && (
             <div className="w-full flex justify-end">
               <div className="flex flex-wrap gap-2 w-[90%] justify-end">
                 {detailedFeelingOptions.map((detailedFeeling, index) => {
@@ -414,7 +474,7 @@ export default function DiaryDatePage() {
               </div>
             </div>
           )}
-          {selectionState === EmotionSelectionState.INPUT_ONE_LINE_DIARY && (
+          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_DIARY && (
             <div>한줄 감정 기록</div>
           )}
         </div>
@@ -422,10 +482,18 @@ export default function DiaryDatePage() {
 
       {/* 하단 네비게이션 */}
       <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-between p-4 rounded-t-[20px] border-t border-gray-200 bg-white shadow-lg">
-        <button className="text-primary">
+        <button className="text-primary" onClick={goToPrevStep}>
           <ChevronLeft size={24} />
         </button>
-        <button className="text-primary">
+        <button
+          className={`text-primary ${
+            !isNextStepEnabled() ? "opacity-30 cursor-not-allowed" : ""
+          }`}
+          onClick={() => {
+            if (isNextStepEnabled()) goToNextStep();
+          }}
+          disabled={!isNextStepEnabled()}
+        >
           <ChevronRight size={24} />
         </button>
       </div>
