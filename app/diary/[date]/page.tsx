@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight } from "lucide-react";
+import FormButton from "@/components/form/FormButton";
 
 // 감정 타입 정의
 interface Emotion {
@@ -25,7 +26,7 @@ enum EmotionSelectiomStep {
   SELECTING_DETAIL = "SELECTING_DETAIL",
   SELECTING_FEELING = "SELECTING_FEELING",
   SELECTING_DETAILED_EMOTIONS = "SELECTING_DETAILED_EMOTIONS",
-  INPUT_ONE_LINE_DIARY = "INPUT_ONE_LINE_DIARY",
+  INPUT_ONE_LINE_RECORD = "INPUT_ONE_LINE_RECORD",
   MIND_REPORT = "MIND_REPORT",
 }
 
@@ -80,7 +81,7 @@ interface DetailedFeeling {
   emotion: DetailedEmotion;
 }
 
-export default function DiaryDatePage() {
+const DiaryDatePage = () => {
   const params = useParams();
   const router = useRouter();
   const { date } = params;
@@ -94,13 +95,18 @@ export default function DiaryDatePage() {
       isUser: false,
     },
   ]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [oneLineRecord, setOneLineRecord] = useState("");
+
+  const [messagesAfterDetailedFeelings, setMessagesAfterDetailedFeelings] =
+    useState<Message[]>([]);
 
   // 메시지가 추가될 때마다 스크롤을 맨 아래로 내리기
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, messagesAfterDetailedFeelings]);
 
   const [selectionStep, setSelectionStep] = useState<EmotionSelectiomStep>(
     EmotionSelectiomStep.SELECTING_EMOTION
@@ -291,6 +297,14 @@ export default function DiaryDatePage() {
     }
   };
 
+  const handleInputOneLineRecord = (selection: string) => {
+    if (selection === "🖊️ 직접 작성하기") {
+      setIsDrawerOpen(true);
+    } else {
+      goToNextStep();
+    }
+  };
+
   const isNextStepEnabled = () => {
     switch (selectionStep) {
       case EmotionSelectiomStep.SELECTING_EMOTION:
@@ -301,7 +315,7 @@ export default function DiaryDatePage() {
         return !!selectedFeeling;
       case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
         return userDetailedFeelings.length >= 1;
-      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+      case EmotionSelectiomStep.INPUT_ONE_LINE_RECORD:
         return true;
       default:
         return false;
@@ -319,11 +333,11 @@ export default function DiaryDatePage() {
       case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
         setSelectionStep(EmotionSelectiomStep.SELECTING_FEELING);
         break;
-      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+      case EmotionSelectiomStep.INPUT_ONE_LINE_RECORD:
         setSelectionStep(EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS);
         break;
       case EmotionSelectiomStep.MIND_REPORT:
-        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_DIARY);
+        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_RECORD);
         break;
       default:
         break;
@@ -342,15 +356,27 @@ export default function DiaryDatePage() {
         setSelectionStep(EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS);
         break;
       case EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS:
-        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_DIARY);
+        setMessagesAfterDetailedFeelings([
+          {
+            id: 1,
+            text: "마지막 질문이에요!\n오늘 하루를 한 줄로 남긴다면?",
+            isUser: false,
+          },
+        ]),
+          setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_RECORD);
         break;
-      case EmotionSelectiomStep.INPUT_ONE_LINE_DIARY:
+      case EmotionSelectiomStep.INPUT_ONE_LINE_RECORD:
         setSelectionStep(EmotionSelectiomStep.MIND_REPORT);
         break;
       default:
         break;
     }
   };
+
+  if (selectionStep == EmotionSelectiomStep.MIND_REPORT)
+    return (
+      <div className="flex flex-col h-screen bg-white"> 마인드 리포트 화면</div>
+    );
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -397,9 +423,57 @@ export default function DiaryDatePage() {
               )}
             </div>
           ))}
+
+          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
+            <div className="w-full flex justify-end">
+              <div className="flex flex-wrap gap-2 w-[90%] justify-end">
+                {userDetailedFeelings.map((detailedFeeling, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={`text-sm border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm ${
+                        emotionColorVariants[detailedFeeling.emotion].active
+                      }`}
+                    >
+                      <span>#{detailedFeeling.text}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
+            <div>
+              {messagesAfterDetailedFeelings.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.isUser ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {!message.isUser && (
+                    <div className="chat-bubble chat-bubble-bot">
+                      <p className="text-sm whitespace-pre-line">
+                        {message.text}
+                      </p>
+                    </div>
+                  )}
+
+                  {message.isUser && (
+                    <div className="chat-bubble chat-bubble-user">
+                      <div className="flex items-center">
+                        <p className="text-sm">{message.text}</p>
+                        <span className="ml-2 text-sm">{message.emoji}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* 감정 선택 영역 */}
+        {/* 사용자 선택 영역 */}
         <div className="p-4 mb-14" ref={chatContainerRef}>
           {selectionStep === EmotionSelectiomStep.SELECTING_EMOTION && (
             <div className="flex flex-col items-end space-y-2">
@@ -474,8 +548,18 @@ export default function DiaryDatePage() {
               </div>
             </div>
           )}
-          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_DIARY && (
-            <div>한줄 감정 기록</div>
+          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
+            <div className="flex flex-col items-end space-y-2">
+              {["🖊️ 직접 작성하기", "SKIP"].map((selection, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleInputOneLineRecord(selection)}
+                  className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
+                >
+                  <span className="text-sm">{selection}</span>
+                </button>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -497,6 +581,54 @@ export default function DiaryDatePage() {
           <ChevronRight size={24} />
         </button>
       </div>
+
+      {isDrawerOpen && (
+        <div
+          className={`fixed bottom-0 left-0 right-0 max-w-md mx-auto h-[60%] bg-white shadow-lg p-6 rounded-t-[20px] border-t border-gray-200 transition-transform duration-500 ease-out ${
+            isDrawerOpen ? "translate-y-0" : "translate-y-full"
+          }`}
+        >
+          <button
+            className="mt-2 text-sm text-gray-500"
+            onClick={() => setIsDrawerOpen(false)}
+          >
+            X
+          </button>
+          <textarea
+            value={oneLineRecord}
+            onChange={(e) => setOneLineRecord(e.target.value)}
+            placeholder="기분이 복잡했지만 나름 잘 버틴 하루"
+            className="w-full mx-auto my-4 border border-primary focus:ring-primary rounded px-3 py-2 text-sm h-[180px] resize-none placeholder:align-top"
+          />
+          <div className="text-xs text-gray-500 mb-8">
+            텍스트 입력은 200자 제한으로 제한돼요!
+          </div>
+          <FormButton
+            isValid={
+              oneLineRecord.trim().length > 0 && oneLineRecord.length <= 200
+            }
+            text={"저장"}
+            onClick={() => {
+              setIsDrawerOpen(false);
+              setMessagesAfterDetailedFeelings([
+                ...messagesAfterDetailedFeelings,
+                {
+                  id: Date.now(),
+                  text: oneLineRecord,
+                  isUser: true,
+                },
+                {
+                  id: Date.now() + 1,
+                  text: "오늘 하루도 고생많았어요!\n오늘의 감정일기를 보여줄게요",
+                  isUser: false,
+                },
+              ]);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default DiaryDatePage;
