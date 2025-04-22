@@ -25,8 +25,10 @@ enum EmotionSelectionState {
   BEFORE_SELECTION = "BEFORE_SELECTION",
   SELECTING_EMOTION = "SELECTING_EMOTION",
   SELECTING_DETAIL = "SELECTING_DETAIL",
-  SELECTING_DURATION = "SELECTING_DURATION",
-  SELECTING_EMOTIONS = "SELECTING_EMOTIONS",
+  SELECTING_FEELING = "SELECTING_FEELING",
+  SELECTING_DETAILED_EMOTIONS = "SELECTING_DETAILED_EMOTIONS",
+  INPUT_ONE_LINE_DIARY = "INPUT_ONE_LINE_DIARY",
+  MIND_REPORT = "MIND_REPORT",
 }
 
 export default function DiaryDatePage() {
@@ -55,7 +57,6 @@ export default function DiaryDatePage() {
     EmotionSelectionState.BEFORE_SELECTION
   );
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
-
   const [userEmotions] = useState<Emotion[]>([
     {
       id: 1,
@@ -124,6 +125,15 @@ export default function DiaryDatePage() {
     },
   ]);
 
+  const [userFeeling, setUserFeeling] = useState<string>();
+
+  const feelingSelections = [
+    "하루 종일 비슷했어요",
+    "중간에 감정이 바뀌었어요",
+    "다양한 감정이 섞였어요",
+    "잘 모르겠어요",
+  ];
+
   useEffect(() => {
     if (typeof date === "string") {
       // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
@@ -169,26 +179,16 @@ export default function DiaryDatePage() {
         isUser: false,
       },
     ]);
-    setSelectionState(EmotionSelectionState.SELECTING_DURATION);
-    setSelectedEmotion({
-      id: 0,
-      text: "감정 상태",
-      emoji: "",
-      details: [
-        "하루 종일 비슷했어요",
-        "중간에 감정이 바뀌었어요",
-        "다양한 감정이 섞였어요",
-        "잘 모르겠어요",
-      ],
-    });
+    setSelectionState(EmotionSelectionState.SELECTING_FEELING);
   };
 
-  const handleDurationSelect = (detail: string) => {
+  const handleFeelingSelect = (feeling: string) => {
+    setUserFeeling(feeling);
     setMessages([
       ...messages,
       {
         id: Date.now(),
-        text: detail,
+        text: feeling,
         isUser: true,
         emoji: "",
       },
@@ -203,7 +203,7 @@ export default function DiaryDatePage() {
         isUser: false,
       },
     ]);
-    setSelectionState(EmotionSelectionState.SELECTING_EMOTIONS);
+    setSelectionState(EmotionSelectionState.SELECTING_DETAILED_EMOTIONS);
   };
 
   return (
@@ -282,12 +282,12 @@ export default function DiaryDatePage() {
               ))}
             </div>
           )}
-          {selectionState === EmotionSelectionState.SELECTING_DURATION && (
+          {selectionState === EmotionSelectionState.SELECTING_FEELING && (
             <div className="flex flex-col items-end space-y-2">
-              {selectedEmotion?.details?.map((detail, index) => (
+              {feelingSelections.map((detail, index) => (
                 <button
                   key={index}
-                  onClick={() => handleDurationSelect(detail)}
+                  onClick={() => handleFeelingSelect(detail)}
                   className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
                 >
                   <span className="text-sm">{detail}</span>
@@ -295,8 +295,12 @@ export default function DiaryDatePage() {
               ))}
             </div>
           )}
-          {selectionState === EmotionSelectionState.SELECTING_EMOTIONS && (
-            <div></div>
+          {selectionState ===
+            EmotionSelectionState.SELECTING_DETAILED_EMOTIONS && (
+            <div>세부 감정 기록</div>
+          )}
+          {selectionState === EmotionSelectionState.INPUT_ONE_LINE_DIARY && (
+            <div>한줄 감정 기록</div>
           )}
         </div>
       </div>
