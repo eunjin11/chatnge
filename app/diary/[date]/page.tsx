@@ -6,11 +6,13 @@ import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import FormButton from "@/components/form/FormButton";
 import { createEmotionRecord, getAiSummary } from "@/app/api/fetchEmotion";
 import {
-  DetailedEmotion,
   DetailedFeeling,
   EmotionResponse,
+  EmotionSelectiomStep,
 } from "@/constants/types";
 import MindReport from "./MindReport";
+import { emotionColorVariants } from "@/constants/emotionColorVariant";
+import { EmotionSelection } from "@/constants/selections";
 
 // 타입 정의
 interface Emotion {
@@ -26,52 +28,6 @@ interface Message {
   isUser: boolean;
   emoji?: string;
 }
-
-enum EmotionSelectiomStep {
-  SELECTING_EMOTION = "SELECTING_EMOTION",
-  SELECTING_DETAIL = "SELECTING_DETAIL",
-  SELECTING_FEELING = "SELECTING_FEELING",
-  SELECTING_DETAILED_EMOTIONS = "SELECTING_DETAILED_EMOTIONS",
-  INPUT_ONE_LINE_RECORD = "INPUT_ONE_LINE_RECORD",
-  MIND_REPORT = "MIND_REPORT",
-}
-
-const emotionColorVariants: Record<
-  DetailedEmotion,
-  {
-    base: string;
-    active: string;
-  }
-> = {
-  joy: {
-    base: "text-emotion-joy hover:bg-emotion-joy hover:text-white active:bg-emotion-joy active:text-white",
-    active: "bg-emotion-joy text-white",
-  },
-  calm: {
-    base: "text-emotion-calm hover:bg-emotion-calm hover:text-white active:bg-emotion-calm active:text-white",
-    active: "bg-emotion-calm text-white",
-  },
-  depression: {
-    base: "text-emotion-depression hover:bg-emotion-depression hover:text-white active:bg-emotion-depression active:text-white",
-    active: "bg-emotion-depression text-white",
-  },
-  anxiety: {
-    base: "text-emotion-anxiety hover:bg-emotion-anxiety hover:text-white active:bg-emotion-anxiety active:text-white",
-    active: "bg-emotion-anxiety text-white",
-  },
-  anger: {
-    base: "text-emotion-anger hover:bg-emotion-anger hover:text-white active:bg-emotion-anger active:text-white",
-    active: "bg-emotion-anger text-white",
-  },
-  fatigue: {
-    base: "text-emotion-fatigue hover:bg-emotion-fatigue hover:text-white active:bg-emotion-fatigue active:text-white",
-    active: "bg-emotion-fatigue text-white",
-  },
-  mixed: {
-    base: "text-emotion-mixed hover:bg-emotion-mixed hover:text-white active:bg-emotion-mixed active:text-white",
-    active: "bg-emotion-mixed text-white",
-  },
-};
 
 const DiaryDatePage = () => {
   const params = useParams();
@@ -105,73 +61,7 @@ const DiaryDatePage = () => {
   >([]);
 
   // 상수 데이터
-  const [userEmotions] = useState<Emotion[]>([
-    {
-      id: 1,
-      text: "매우 좋아요",
-      emoji: "😊",
-      details: [
-        "친구랑 너무 즐거운 시간을 보냈어요",
-        "좋은 일이 연달아 생겼어요",
-        "하고 싶은 걸 마음껏 했어요",
-        "기대했던 일이 잘 풀렸어요",
-        "오늘 하루가 그냥 완벽했어요",
-        "🖊️ 직접 쓸래요",
-      ],
-    },
-    {
-      id: 2,
-      text: "좋아요",
-      emoji: "🙂",
-      details: [
-        "소소하지만 기분 좋은 일이 있었어요",
-        "마음이 편안했어요",
-        "하고 싶었던 걸 해냈어요",
-        "주변 사람들 덕분에 기분이 좋았어요",
-        "오늘은 별일 없지만 괜찮았어요",
-        "🖊️ 직접 쓸래요",
-      ],
-    },
-    {
-      id: 3,
-      text: "그저 그래요",
-      emoji: "😐",
-      details: [
-        "별다른 일 없이 지나갔어요",
-        "뭔가 애매한 기분이었어요",
-        "나쁘진 않은데 딱히 좋지도 않았어요",
-        "하루가 너무 빨리 지나갔어요",
-        "몸은 괜찮은데 마음이 심심했어요",
-        "🖊️ 직접 쓸래요",
-      ],
-    },
-    {
-      id: 4,
-      text: "속상해요",
-      emoji: "😔",
-      details: [
-        "해야 할 일이 너무 많았어요",
-        "몸이 지치고 피곤했어요",
-        "마음이 복잡했어요",
-        "누군가와의 관계에서 힘들었어요",
-        "스스로에게 실망했어요",
-        "🖊️ 직접 쓸래요",
-      ],
-    },
-    {
-      id: 5,
-      text: "힘들어요",
-      emoji: "😔",
-      details: [
-        "친구랑 다퉜어요",
-        "혼자 있는 시간이 힘들었어요",
-        "기대했던 일이 어긋났어요",
-        "내가 뭘 잘못했는지 모르겠어요",
-        "작은 말에 상처받았어요",
-        "🖊️ 직접 쓸래요",
-      ],
-    },
-  ]);
+  const [userEmotions] = useState<Emotion[]>(EmotionSelection);
 
   const feelingSelections = [
     "하루 종일 비슷했어요",
