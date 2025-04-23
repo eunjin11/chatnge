@@ -12,7 +12,7 @@ import {
 } from "@/constants/types";
 import MindReport from "./MindReport";
 
-// 감정 타입 정의
+// 타입 정의
 interface Emotion {
   id: number;
   text: string;
@@ -20,7 +20,6 @@ interface Emotion {
   details?: string[];
 }
 
-// 메시지 타입 정의
 interface Message {
   id: number;
   text: string;
@@ -80,6 +79,7 @@ const DiaryDatePage = () => {
   const { date } = params;
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // ========== 상태(State) 그룹 ==========
   const [formattedDate, setFormattedDate] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -92,21 +92,19 @@ const DiaryDatePage = () => {
   const [oneLineRecord, setOneLineRecord] = useState("");
   const [finalEmotionRecord, setFinalEmotionRecord] =
     useState<EmotionResponse | null>(null);
-
   const [messagesAfterDetailedFeelings, setMessagesAfterDetailedFeelings] =
     useState<Message[]>([]);
-
-  // 메시지가 추가될 때마다 스크롤을 맨 아래로 내리기
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages, messagesAfterDetailedFeelings]);
-
   const [selectionStep, setSelectionStep] = useState<EmotionSelectiomStep>(
     EmotionSelectiomStep.SELECTING_EMOTION
   );
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
+  const [selectedDetail, setSelectedDetail] = useState<string>();
+  const [selectedFeeling, setSelectedFeeling] = useState<string>();
+  const [userDetailedFeelings, setUserDetailedFeelings] = useState<
+    DetailedFeeling[]
+  >([]);
+
+  // 상수 데이터
   const [userEmotions] = useState<Emotion[]>([
     {
       id: 1,
@@ -174,8 +172,6 @@ const DiaryDatePage = () => {
       ],
     },
   ]);
-  const [selectedDetail, setSelectedDetail] = useState<string>();
-  const [selectedFeeling, setSelectedFeeling] = useState<string>();
 
   const feelingSelections = [
     "하루 종일 비슷했어요",
@@ -202,10 +198,8 @@ const DiaryDatePage = () => {
     { text: "슬픔", emotion: "depression" },
   ];
 
-  const [userDetailedFeelings, setUserDetailedFeelings] = useState<
-    DetailedFeeling[]
-  >([]);
-
+  // ========== 함수 그룹 ==========
+  // API 함수
   const saveAiSummaryAndRecord = async () => {
     const summary = await getAiSummary({
       emotion: selectedEmotion?.text || "",
@@ -233,17 +227,7 @@ const DiaryDatePage = () => {
     setFinalEmotionRecord(newEmotionRecord);
   };
 
-  useEffect(() => {
-    if (typeof date === "string") {
-      // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
-      const dateObj = new Date(date);
-      const year = dateObj.getFullYear();
-      const month = dateObj.getMonth() + 1;
-      const day = dateObj.getDate();
-      setFormattedDate(`${year}년 ${month}월 ${day}일`);
-    }
-  }, [date]);
-
+  // 이벤트 핸들러 함수
   const handleEmotionSelect = (emotion: Emotion) => {
     setSelectedEmotion(emotion);
     setMessages([
@@ -344,6 +328,7 @@ const DiaryDatePage = () => {
     ]);
   };
 
+  // 내비게이션 함수
   const isNextStepEnabled = () => {
     switch (selectionStep) {
       case EmotionSelectiomStep.SELECTING_EMOTION:
@@ -401,8 +386,8 @@ const DiaryDatePage = () => {
             text: "마지막 질문이에요!\n오늘 하루를 한 줄로 남긴다면?",
             isUser: false,
           },
-        ]),
-          setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_RECORD);
+        ]);
+        setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_RECORD);
         break;
       case EmotionSelectiomStep.INPUT_ONE_LINE_RECORD:
         await saveAiSummaryAndRecord();
@@ -413,6 +398,28 @@ const DiaryDatePage = () => {
     }
   };
 
+  // ========== useEffect 훅 ==========
+  // 날짜 포맷팅
+  useEffect(() => {
+    if (typeof date === "string") {
+      // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
+      const dateObj = new Date(date);
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      const day = dateObj.getDate();
+      setFormattedDate(`${year}년 ${month}월 ${day}일`);
+    }
+  }, [date]);
+
+  // 메시지가 추가될 때마다 스크롤을 맨 아래로 내리기
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, messagesAfterDetailedFeelings]);
+
+  // ========== 렌더링 로직 ==========
+  // MindReport 페이지로 전환
   if (selectionStep === EmotionSelectiomStep.MIND_REPORT && finalEmotionRecord)
     return <MindReport emotionRecord={finalEmotionRecord} />;
 
@@ -586,19 +593,20 @@ const DiaryDatePage = () => {
               </div>
             </div>
           )}
-          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
-            <div className="flex flex-col items-end space-y-2">
-              {["🖊️ 직접 작성하기", "SKIP"].map((selection, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleInputOneLineRecord(selection)}
-                  className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
-                >
-                  <span className="text-sm">{selection}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD &&
+            oneLineRecord === "" && (
+              <div className="flex flex-col items-end space-y-2">
+                {["🖊️ 직접 작성하기", "SKIP"].map((selection, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleInputOneLineRecord(selection)}
+                    className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
+                  >
+                    <span className="text-sm">{selection}</span>
+                  </button>
+                ))}
+              </div>
+            )}
         </div>
       </div>
 
@@ -620,6 +628,7 @@ const DiaryDatePage = () => {
         </button>
       </div>
 
+      {/* 드로어 */}
       {isDrawerOpen && (
         <div
           className={`fixed bottom-0 left-0 right-0 max-w-md mx-auto h-[60%] bg-white shadow-lg p-6 rounded-t-[20px] border-t border-gray-200 transition-transform duration-500 ease-out ${
