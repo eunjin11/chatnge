@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 import BottomNaviation from "@/components/BottomNaviation";
 import { formatDate } from "@/utils/formatDate";
 import { formatFullDate } from "@/utils/formatFullDate";
-import TabNavigation from "@/components/TabNavigation";
-import DiaryCard from "@/components/DiaryCard";
-import MindLog from "@/components/MindLog";
-import MonthResolution from "@/components/MonthResolution";
+import TabNavigation from "@/app/diary/_component/TabNavigation";
+import DiaryCard from "@/app/diary/_component/DiaryCard";
+import MindLog from "@/app/diary/_component/MindLog";
+import MonthResolution from "@/app/diary/_component/MonthResolution";
 
 export default function DiaryPage() {
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function DiaryPage() {
               className="w-[8px] h-[10px] align-middle"
             />
           </div>
-          <div className="emoji-container">
+          <div className="emoji-container mx-auto flex justify-between items-center mt-2">
             {weekDates.map(({ date, emotion, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}

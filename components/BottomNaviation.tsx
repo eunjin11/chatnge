@@ -6,7 +6,7 @@ import React from "react";
 
 const BottomNaviation = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-between items-center py-4 px-2 border-t bg-white border-gray-200 rounded-t-[20px] shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 flex justify-between items-center py-4 px-6 border-t bg-white border-gray-200 rounded-t-[20px] shadow-lg max-w-md mx-auto">
       <button className="flex flex-col items-center text-primary">
         <Activity size={20} />
         <span className="text-xs mt-1">기록</span>

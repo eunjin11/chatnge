@@ -2,18 +2,18 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import NicknameStep from "./NicknameStep";
-import BirthDateStep from "./BirthDateStep";
-import MotivationStep from "./MotivationStep";
-import MedicationStatusStep from "./MedicationStatusStep";
-import ConfirmStep from "./ConfirmStep";
+import NicknameStep from "./_component/NicknameStep";
+import BirthDateStep from "./_component/BirthDateStep";
+import MotivationStep from "./_component/MotivationStep";
+import MedicationStatusStep from "./_component/MedicationStatusStep";
+import ConfirmStep from "./_component/ConfirmStep";
 import { updateProfile } from "@/app/api/user";
 import {
   MedicationStatus,
   ProfileUpdateData,
   ProfileUpdateStep,
 } from "@/constants/types";
-import StatusStep from "./StatusStep";
+import StatusStep from "./_component/StatusStep";
 
 const ProfileSettingPage = () => {
   const router = useRouter();
