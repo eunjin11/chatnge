@@ -1,7 +1,7 @@
 "use server";
 import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
-import { getUserEmail } from "./fetchUser";
+import { getUserEmail } from "./user";
 
 export async function createEmotionRecord(
   emotionData: EmotionData

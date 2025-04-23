@@ -7,7 +7,7 @@ import BirthDateStep from "./BirthDateStep";
 import MotivationStep from "./MotivationStep";
 import MedicationStatusStep from "./MedicationStatusStep";
 import ConfirmStep from "./ConfirmStep";
-import { updateProfile } from "@/app/api/fetchUser";
+import { updateProfile } from "@/app/api/user";
 import {
   MedicationStatus,
   ProfileUpdateData,

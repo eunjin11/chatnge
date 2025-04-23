@@ -4,15 +4,20 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import FormButton from "@/components/form/FormButton";
-import { createEmotionRecord, getAiSummary } from "@/app/api/fetchEmotion";
+import { createEmotionRecord, getAiSummary } from "@/app/api/emotion";
 import {
   DetailedFeeling,
   EmotionResponse,
   EmotionSelectiomStep,
 } from "@/constants/types";
-import MindReport from "./MindReport";
+import MindReport from "./_component/MindReport";
 import { emotionColorVariants } from "@/constants/emotionColorVariant";
-import { EmotionSelection } from "@/constants/selections";
+import {
+  detailedFeelingOptions,
+  EmotionSelection,
+  feelingSelections,
+} from "@/constants/selections";
+import ChatBubble from "./_component/ChatBubble";
 
 // 타입 정의
 interface Emotion {
@@ -22,7 +27,7 @@ interface Emotion {
   details?: string[];
 }
 
-interface Message {
+export interface Message {
   id: number;
   text: string;
   isUser: boolean;
@@ -59,34 +64,6 @@ const DiaryDatePage = () => {
   const [userDetailedFeelings, setUserDetailedFeelings] = useState<
     DetailedFeeling[]
   >([]);
-
-  // 상수 데이터
-  const [userEmotions] = useState<Emotion[]>(EmotionSelection);
-
-  const feelingSelections = [
-    "하루 종일 비슷했어요",
-    "중간에 감정이 바뀌었어요",
-    "다양한 감정이 섞였어요",
-    "잘 모르겠어요",
-  ];
-
-  const detailedFeelingOptions: DetailedFeeling[] = [
-    { text: "기쁨", emotion: "joy" },
-    { text: "자신감", emotion: "joy" },
-    { text: "설렘", emotion: "joy" },
-    { text: "불안", emotion: "anxiety" },
-    { text: "걱정", emotion: "anxiety" },
-    { text: "차분함", emotion: "calm" },
-    { text: "편안함", emotion: "calm" },
-    { text: "분노", emotion: "anger" },
-    { text: "짜증", emotion: "anger" },
-    { text: "피곤함", emotion: "fatigue" },
-    { text: "무기력", emotion: "fatigue" },
-    { text: "복잡함", emotion: "mixed" },
-    { text: "답답", emotion: "mixed" },
-    { text: "외로움", emotion: "depression" },
-    { text: "슬픔", emotion: "depression" },
-  ];
 
   // ========== 함수 그룹 ==========
   // API 함수
@@ -336,27 +313,7 @@ const DiaryDatePage = () => {
         {/* 채팅 영역 */}
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.isUser ? "justify-end" : "justify-start"
-              }`}
-            >
-              {!message.isUser && (
-                <div className="chat-bubble chat-bubble-bot">
-                  <p className="text-sm whitespace-pre-line">{message.text}</p>
-                </div>
-              )}
-
-              {message.isUser && (
-                <div className="chat-bubble chat-bubble-user">
-                  <div className="flex items-center">
-                    <p className="text-sm">{message.text}</p>
-                    <span className="ml-2 text-sm">{message.emoji}</span>
-                  </div>
-                </div>
-              )}
-            </div>
+            <ChatBubble key={message.id} message={message} />
           ))}
 
           {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
@@ -377,178 +334,159 @@ const DiaryDatePage = () => {
               </div>
             </div>
           )}
+
           {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD && (
             <div>
               {messagesAfterDetailedFeelings.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.isUser ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {!message.isUser && (
-                    <div className="chat-bubble chat-bubble-bot">
-                      <p className="text-sm whitespace-pre-line">
-                        {message.text}
-                      </p>
-                    </div>
-                  )}
-
-                  {message.isUser && (
-                    <div className="chat-bubble chat-bubble-user">
-                      <div className="flex items-center">
-                        <p className="text-sm">{message.text}</p>
-                        <span className="ml-2 text-sm">{message.emoji}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <ChatBubble key={message.id} message={message} />
               ))}
             </div>
           )}
         </div>
-
-        {/* 사용자 선택 영역 */}
-        <div className="p-4 mb-14" ref={chatContainerRef}>
-          {selectionStep === EmotionSelectiomStep.SELECTING_EMOTION && (
-            <div className="flex flex-col items-end space-y-2">
-              {userEmotions.map((emotion) => (
-                <button
-                  key={emotion.id}
-                  onClick={() => handleEmotionSelect(emotion)}
-                  className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
-                >
-                  <span className="mr-2 text-sm">{emotion.emoji}</span>
-                  <span className="text-sm">{emotion.text}</span>
-                </button>
-              ))}
-            </div>
-          )}
-          {selectionStep === EmotionSelectiomStep.SELECTING_DETAIL && (
-            <div className="flex flex-col items-end space-y-2">
-              {selectedEmotion?.details?.map((detail, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleDetailSelect(detail)}
-                  className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
-                >
-                  <span className="text-sm">{detail}</span>
-                </button>
-              ))}
-            </div>
-          )}
-          {selectionStep === EmotionSelectiomStep.SELECTING_FEELING && (
-            <div className="flex flex-col items-end space-y-2">
-              {feelingSelections.map((feeling, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleFeelingSelect(feeling)}
-                  className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
-                >
-                  <span className="text-sm">{feeling}</span>
-                </button>
-              ))}
-            </div>
-          )}
-          {selectionStep ===
-            EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS && (
-            <div className="w-full flex justify-end">
-              <div className="flex flex-wrap gap-2 w-[90%] justify-end">
-                {detailedFeelingOptions.map((detailedFeeling, index) => {
-                  const isSelected = userDetailedFeelings.some(
-                    (f) => f.text === detailedFeeling.text
-                  );
-                  const isMaxSelected = userDetailedFeelings.length >= 3;
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => toggleDetailedFeeling(detailedFeeling)}
-                      disabled={isMaxSelected && !isSelected}
-                      className={`text-sm border border-gray-200 rounded-[15px] px-4 py-2 shadow-sm ${
-                        emotionColorVariants[detailedFeeling.emotion].base
-                      } ${
-                        isSelected
-                          ? emotionColorVariants[detailedFeeling.emotion].active
-                          : ""
-                      } ${
-                        isMaxSelected && !isSelected
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      <span>#{detailedFeeling.text}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD &&
-            oneLineRecord === "" && (
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          {/* 사용자 선택 영역 */}
+          <div className="p-4 mb-14" ref={chatContainerRef}>
+            {selectionStep === EmotionSelectiomStep.SELECTING_EMOTION && (
               <div className="flex flex-col items-end space-y-2">
-                {["🖊️ 직접 작성하기", "SKIP"].map((selection, index) => (
+                {EmotionSelection.map((emotion) => (
                   <button
-                    key={index}
-                    onClick={() => handleInputOneLineRecord(selection)}
+                    key={emotion.id}
+                    onClick={() => handleEmotionSelect(emotion)}
                     className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
                   >
-                    <span className="text-sm">{selection}</span>
+                    <span className="mr-2 text-sm">{emotion.emoji}</span>
+                    <span className="text-sm">{emotion.text}</span>
                   </button>
                 ))}
               </div>
             )}
-        </div>
-      </div>
-
-      {/* 하단 네비게이션 */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-between p-4 rounded-t-[20px] border-t border-gray-200 bg-white shadow-lg">
-        <button className="text-primary" onClick={goToPrevStep}>
-          <ChevronLeft size={24} />
-        </button>
-        <button
-          className={`text-primary ${
-            !isNextStepEnabled() ? "opacity-30 cursor-not-allowed" : ""
-          }`}
-          onClick={() => {
-            if (isNextStepEnabled()) goToNextStep();
-          }}
-          disabled={!isNextStepEnabled()}
-        >
-          <ChevronRight size={24} />
-        </button>
-      </div>
-
-      {/* 드로어 */}
-      {isDrawerOpen && (
-        <div
-          className={`fixed bottom-0 left-0 right-0 max-w-md mx-auto h-[60%] bg-white shadow-lg p-6 rounded-t-[20px] border-t border-gray-200 transition-transform duration-500 ease-out ${
-            isDrawerOpen ? "translate-y-0" : "translate-y-full"
-          }`}
-        >
-          <button
-            className="mt-2 text-sm text-gray-500"
-            onClick={() => setIsDrawerOpen(false)}
-          >
-            X
-          </button>
-          <textarea
-            value={oneLineRecord}
-            onChange={(e) => setOneLineRecord(e.target.value)}
-            placeholder="기분이 복잡했지만 나름 잘 버틴 하루"
-            className="w-full mx-auto my-4 border border-primary focus:ring-primary rounded px-3 py-2 text-sm h-[180px] resize-none placeholder:align-top"
-          />
-          <div className="text-xs text-gray-500 mb-8">
-            텍스트 입력은 200자 제한으로 제한돼요!
+            {selectionStep === EmotionSelectiomStep.SELECTING_DETAIL && (
+              <div className="flex flex-col items-end space-y-2">
+                {selectedEmotion?.details?.map((detail, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleDetailSelect(detail)}
+                    className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
+                  >
+                    <span className="text-sm">{detail}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {selectionStep === EmotionSelectiomStep.SELECTING_FEELING && (
+              <div className="flex flex-col items-end space-y-2">
+                {feelingSelections.map((feeling, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleFeelingSelect(feeling)}
+                    className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
+                  >
+                    <span className="text-sm">{feeling}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {selectionStep ===
+              EmotionSelectiomStep.SELECTING_DETAILED_EMOTIONS && (
+              <div className="w-full flex justify-end">
+                <div className="flex flex-wrap gap-2 w-[90%] justify-end">
+                  {detailedFeelingOptions.map((detailedFeeling, index) => {
+                    const isSelected = userDetailedFeelings.some(
+                      (f) => f.text === detailedFeeling.text
+                    );
+                    const isMaxSelected = userDetailedFeelings.length >= 3;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => toggleDetailedFeeling(detailedFeeling)}
+                        disabled={isMaxSelected && !isSelected}
+                        className={`text-sm border border-gray-200 rounded-[15px] px-4 py-2 shadow-sm ${
+                          emotionColorVariants[detailedFeeling.emotion].base
+                        } ${
+                          isSelected
+                            ? emotionColorVariants[detailedFeeling.emotion]
+                                .active
+                            : ""
+                        } ${
+                          isMaxSelected && !isSelected
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                      >
+                        <span>#{detailedFeeling.text}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {selectionStep === EmotionSelectiomStep.INPUT_ONE_LINE_RECORD &&
+              oneLineRecord === "" && (
+                <div className="flex flex-col items-end space-y-2">
+                  {["🖊️ 직접 작성하기", "SKIP"].map((selection, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleInputOneLineRecord(selection)}
+                      className="border border-gray-200 rounded-[15px] rounded-br-none px-4 py-2 shadow-sm"
+                    >
+                      <span className="text-sm">{selection}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
           </div>
-          <FormButton
-            isValid={
-              oneLineRecord.trim().length > 0 && oneLineRecord.length <= 200
-            }
-            text={"저장"}
-            onClick={handleSaveOneLineRecord}
-          />
         </div>
-      )}
+
+        {/* 하단 네비게이션 */}
+        <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-between p-4 rounded-t-[20px] border-t border-gray-200 bg-white shadow-lg">
+          <button className="text-primary" onClick={goToPrevStep}>
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            className={`text-primary ${
+              !isNextStepEnabled() ? "opacity-30 cursor-not-allowed" : ""
+            }`}
+            onClick={() => {
+              if (isNextStepEnabled()) goToNextStep();
+            }}
+            disabled={!isNextStepEnabled()}
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+
+        {/* 드로어 */}
+        {isDrawerOpen && (
+          <div
+            className={`fixed bottom-0 left-0 right-0 max-w-md mx-auto h-[60%] bg-white shadow-lg p-6 rounded-t-[20px] border-t border-gray-200 transition-transform duration-500 ease-out ${
+              isDrawerOpen ? "translate-y-0" : "translate-y-full"
+            }`}
+          >
+            <button
+              className="mt-2 text-sm text-gray-500"
+              onClick={() => setIsDrawerOpen(false)}
+            >
+              X
+            </button>
+            <textarea
+              value={oneLineRecord}
+              onChange={(e) => setOneLineRecord(e.target.value)}
+              placeholder="기분이 복잡했지만 나름 잘 버틴 하루"
+              className="w-full mx-auto my-4 border border-primary focus:ring-primary rounded px-3 py-2 text-sm h-[180px] resize-none placeholder:align-top"
+            />
+            <div className="text-xs text-gray-500 mb-8">
+              텍스트 입력은 200자 제한으로 제한돼요!
+            </div>
+            <FormButton
+              isValid={
+                oneLineRecord.trim().length > 0 && oneLineRecord.length <= 200
+              }
+              text={"저장"}
+              onClick={handleSaveOneLineRecord}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

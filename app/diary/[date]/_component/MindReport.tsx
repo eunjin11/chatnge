@@ -58,6 +58,11 @@ const MindReport = ({ emotionRecord }: MindReportProps) => {
             ))}
           </div>
           <div className="mt-4">
+            <p className="text-sm text-gray-700">
+              {emotionRecord.oneLineRecord}
+            </p>
+          </div>
+          <div className="mt-4">
             <p className="text-sm text-gray-700">{emotionRecord.aiSummary}</p>
           </div>
         </div>

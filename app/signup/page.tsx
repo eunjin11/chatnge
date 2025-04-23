@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
-import { signup } from "../api/fetchAuth";
+import { signup } from "../api/auth";
 import InfoStep from "./InfoStep";
 import PWStep from "./PWStep";
 import { SignUpStep } from "@/constants/types";

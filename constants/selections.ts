@@ -1,3 +1,5 @@
+import { DetailedFeeling } from "./types";
+
 export const EmotionSelection = [
   {
     id: 1,
@@ -64,4 +66,29 @@ export const EmotionSelection = [
       "🖊️ 직접 쓸래요",
     ],
   },
+];
+
+export const feelingSelections = [
+  "하루 종일 비슷했어요",
+  "중간에 감정이 바뀌었어요",
+  "다양한 감정이 섞였어요",
+  "잘 모르겠어요",
+];
+
+export const detailedFeelingOptions: DetailedFeeling[] = [
+  { text: "기쁨", emotion: "joy" },
+  { text: "자신감", emotion: "joy" },
+  { text: "설렘", emotion: "joy" },
+  { text: "불안", emotion: "anxiety" },
+  { text: "걱정", emotion: "anxiety" },
+  { text: "차분함", emotion: "calm" },
+  { text: "편안함", emotion: "calm" },
+  { text: "분노", emotion: "anger" },
+  { text: "짜증", emotion: "anger" },
+  { text: "피곤함", emotion: "fatigue" },
+  { text: "무기력", emotion: "fatigue" },
+  { text: "복잡함", emotion: "mixed" },
+  { text: "답답", emotion: "mixed" },
+  { text: "외로움", emotion: "depression" },
+  { text: "슬픔", emotion: "depression" },
 ];
