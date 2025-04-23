@@ -309,9 +309,9 @@ const DiaryDatePage = () => {
       </div>
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex overflow-y-auto flex-col">
         {/* 채팅 영역 */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 p-4 space-y-2">
           {messages.map((message) => (
             <ChatBubble key={message.id} message={message} />
           ))}
@@ -343,7 +343,7 @@ const DiaryDatePage = () => {
             </div>
           )}
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <div className="flex-1 p-4 space-y-2">
           {/* 사용자 선택 영역 */}
           <div className="p-4 mb-14" ref={chatContainerRef}>
             {selectionStep === EmotionSelectiomStep.SELECTING_EMOTION && (
