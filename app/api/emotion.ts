@@ -41,10 +41,16 @@ export async function getEmotionRecordByDate(
   date: Date
 ): Promise<EmotionResponse | null> {
   try {
+    const userEmail = await getUserEmail();
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
     const emotionRecord = await prisma.emotionRecord.findFirst({
       where: {
-        userEmail: await getUserEmail(),
-        date: date,
+        userEmail,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
       },
     });
 
