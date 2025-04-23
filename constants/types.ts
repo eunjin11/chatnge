@@ -43,8 +43,21 @@ export interface ProfileResponse {
   error?: string;
 }
 
+export type DetailedEmotion =
+  | "joy"
+  | "calm"
+  | "depression"
+  | "anxiety"
+  | "anger"
+  | "fatigue"
+  | "mixed";
+
+export interface DetailedFeeling {
+  text: string;
+  emotion: DetailedEmotion;
+}
+
 export interface EmotionData {
-  userEmail: string;
   emotion: string;
   date: Date;
   reason: string;
@@ -56,7 +69,6 @@ export interface EmotionData {
 
 export interface EmotionResponse {
   id: number;
-  userEmail: string;
   emotion: string;
   date: Date;
   reason: string | null;

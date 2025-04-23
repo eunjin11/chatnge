@@ -27,6 +27,16 @@ export async function createEmotionRecord(
   }
 }
 
+export async function getAiSummary(emotionData: EmotionData): Promise<string> {
+  try {
+    console.log("emotionData", emotionData);
+    return "ai summary";
+  } catch (error) {
+    console.error("Error creating emotion record:", error);
+    throw new Error("ai 요약을 생성하는 중 오류가 발생했습니다.");
+  }
+}
+
 export async function getEmotionRecordByDate(
   date: Date
 ): Promise<EmotionResponse | null> {

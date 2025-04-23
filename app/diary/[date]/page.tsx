@@ -4,6 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import FormButton from "@/components/form/FormButton";
+import { createEmotionRecord, getAiSummary } from "@/app/api/fetchEmotion";
+import {
+  DetailedEmotion,
+  DetailedFeeling,
+  EmotionResponse,
+} from "@/constants/types";
+import MindReport from "./MindReport";
 
 // 감정 타입 정의
 interface Emotion {
@@ -29,15 +36,6 @@ enum EmotionSelectiomStep {
   INPUT_ONE_LINE_RECORD = "INPUT_ONE_LINE_RECORD",
   MIND_REPORT = "MIND_REPORT",
 }
-
-type DetailedEmotion =
-  | "joy"
-  | "calm"
-  | "depression"
-  | "anxiety"
-  | "anger"
-  | "fatigue"
-  | "mixed";
 
 const emotionColorVariants: Record<
   DetailedEmotion,
@@ -76,11 +74,6 @@ const emotionColorVariants: Record<
   },
 };
 
-interface DetailedFeeling {
-  text: string;
-  emotion: DetailedEmotion;
-}
-
 const DiaryDatePage = () => {
   const params = useParams();
   const router = useRouter();
@@ -97,6 +90,8 @@ const DiaryDatePage = () => {
   ]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [oneLineRecord, setOneLineRecord] = useState("");
+  const [finalEmotionRecord, setFinalEmotionRecord] =
+    useState<EmotionResponse | null>(null);
 
   const [messagesAfterDetailedFeelings, setMessagesAfterDetailedFeelings] =
     useState<Message[]>([]);
@@ -211,6 +206,33 @@ const DiaryDatePage = () => {
     DetailedFeeling[]
   >([]);
 
+  const saveAiSummaryAndRecord = async () => {
+    const summary = await getAiSummary({
+      emotion: selectedEmotion?.text || "",
+      date: typeof date === "string" ? new Date(date) : new Date(),
+      reason: selectedDetail || "",
+      feeling: selectedFeeling || "",
+      detailedEmotions: userDetailedFeelings.map(
+        (feeling) => feeling.text || ""
+      ),
+      oneLineRecord: oneLineRecord,
+    });
+
+    const newEmotionRecord = await createEmotionRecord({
+      emotion: selectedEmotion?.text || "",
+      date: typeof date === "string" ? new Date(date) : new Date(),
+      reason: selectedDetail || "",
+      feeling: selectedFeeling || "",
+      detailedEmotions: userDetailedFeelings.map(
+        (feeling) => feeling.text || ""
+      ),
+      oneLineRecord: oneLineRecord,
+      aiSummary: summary,
+    });
+
+    setFinalEmotionRecord(newEmotionRecord);
+  };
+
   useEffect(() => {
     if (typeof date === "string") {
       // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
@@ -305,6 +327,23 @@ const DiaryDatePage = () => {
     }
   };
 
+  const handleSaveOneLineRecord = () => {
+    setIsDrawerOpen(false);
+    setMessagesAfterDetailedFeelings([
+      ...messagesAfterDetailedFeelings,
+      {
+        id: Date.now(),
+        text: oneLineRecord,
+        isUser: true,
+      },
+      {
+        id: Date.now() + 1,
+        text: "오늘 하루도 고생많았어요!\n오늘의 감정일기를 보여줄게요",
+        isUser: false,
+      },
+    ]);
+  };
+
   const isNextStepEnabled = () => {
     switch (selectionStep) {
       case EmotionSelectiomStep.SELECTING_EMOTION:
@@ -344,7 +383,7 @@ const DiaryDatePage = () => {
     }
   };
 
-  const goToNextStep = () => {
+  const goToNextStep = async () => {
     switch (selectionStep) {
       case EmotionSelectiomStep.SELECTING_EMOTION:
         setSelectionStep(EmotionSelectiomStep.SELECTING_DETAIL);
@@ -366,6 +405,7 @@ const DiaryDatePage = () => {
           setSelectionStep(EmotionSelectiomStep.INPUT_ONE_LINE_RECORD);
         break;
       case EmotionSelectiomStep.INPUT_ONE_LINE_RECORD:
+        await saveAiSummaryAndRecord();
         setSelectionStep(EmotionSelectiomStep.MIND_REPORT);
         break;
       default:
@@ -373,10 +413,8 @@ const DiaryDatePage = () => {
     }
   };
 
-  if (selectionStep == EmotionSelectiomStep.MIND_REPORT)
-    return (
-      <div className="flex flex-col h-screen bg-white"> 마인드 리포트 화면</div>
-    );
+  if (selectionStep === EmotionSelectiomStep.MIND_REPORT && finalEmotionRecord)
+    return <MindReport emotionRecord={finalEmotionRecord} />;
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -608,22 +646,7 @@ const DiaryDatePage = () => {
               oneLineRecord.trim().length > 0 && oneLineRecord.length <= 200
             }
             text={"저장"}
-            onClick={() => {
-              setIsDrawerOpen(false);
-              setMessagesAfterDetailedFeelings([
-                ...messagesAfterDetailedFeelings,
-                {
-                  id: Date.now(),
-                  text: oneLineRecord,
-                  isUser: true,
-                },
-                {
-                  id: Date.now() + 1,
-                  text: "오늘 하루도 고생많았어요!\n오늘의 감정일기를 보여줄게요",
-                  isUser: false,
-                },
-              ]);
-            }}
+            onClick={handleSaveOneLineRecord}
           />
         </div>
       )}
