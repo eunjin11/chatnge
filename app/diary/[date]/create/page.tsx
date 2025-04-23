@@ -10,14 +10,14 @@ import {
   EmotionResponse,
   EmotionSelectiomStep,
 } from "@/constants/types";
-import MindReport from "./_component/MindReport";
+import MindReport from "../_component/MindReport";
 import { emotionColorVariants } from "@/constants/emotionColorVariant";
 import {
   detailedFeelingOptions,
   EmotionSelection,
   feelingSelections,
 } from "@/constants/selections";
-import ChatBubble from "./_component/ChatBubble";
+import ChatBubble from "../_component/ChatBubble";
 
 // 타입 정의
 interface Emotion {

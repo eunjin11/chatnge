@@ -10,6 +10,15 @@ export type SignUpStep = "정보 입력" | "비밀번호 입력";
 
 export type MedicationStatus = "YES" | "NO" | "UNKNOWN";
 
+export enum EmotionSelectiomStep {
+  SELECTING_EMOTION = "SELECTING_EMOTION",
+  SELECTING_DETAIL = "SELECTING_DETAIL",
+  SELECTING_FEELING = "SELECTING_FEELING",
+  SELECTING_DETAILED_EMOTIONS = "SELECTING_DETAILED_EMOTIONS",
+  INPUT_ONE_LINE_RECORD = "INPUT_ONE_LINE_RECORD",
+  MIND_REPORT = "MIND_REPORT",
+}
+
 export interface ProfileUpdateData {
   nickname: string;
   birthdate: Date;
@@ -43,8 +52,21 @@ export interface ProfileResponse {
   error?: string;
 }
 
+export type DetailedEmotion =
+  | "joy"
+  | "calm"
+  | "depression"
+  | "anxiety"
+  | "anger"
+  | "fatigue"
+  | "mixed";
+
+export interface DetailedFeeling {
+  text: string;
+  emotion: DetailedEmotion;
+}
+
 export interface EmotionData {
-  userEmail: string;
   emotion: string;
   date: Date;
   reason: string;
@@ -56,7 +78,6 @@ export interface EmotionData {
 
 export interface EmotionResponse {
   id: number;
-  userEmail: string;
   emotion: string;
   date: Date;
   reason: string | null;

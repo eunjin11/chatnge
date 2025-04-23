@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import BottomNaviation from "@/components/BottomNaviation";
 import { formatDate } from "@/utils/formatDate";
 import { formatFullDate } from "@/utils/formatFullDate";
-import TabNavigation from "@/components/TabNavigation";
-import DiaryCard from "@/components/DiaryCard";
-import MindLog from "@/components/MindLog";
-import MonthResolution from "@/components/MonthResolution";
+import TabNavigation from "@/app/diary/_component/TabNavigation";
+import DiaryCard from "@/app/diary/_component/DiaryCard";
+import MindLog from "@/app/diary/_component/MindLog";
+import MonthResolution from "@/app/diary/_component/MonthResolution";
+import { getEmotionRecordByDate } from "../api/emotion";
 
 export default function DiaryPage() {
   const router = useRouter();
@@ -28,33 +29,50 @@ export default function DiaryPage() {
   >([]);
 
   useEffect(() => {
-    // 이번주 일요일 구하기
-    const now = new Date();
-    const day = now.getDay(); // 0: 일요일, 1: 월요일, ...
-    const sunday = new Date(now);
-    sunday.setDate(now.getDate() - day); // 이번주 일요일
+    const fetchEmotionRecords = async () => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const day = now.getDay();
+      const sunday = new Date(now);
+      sunday.setDate(now.getDate() - day);
 
-    const saturday = new Date(sunday);
-    saturday.setDate(sunday.getDate() + 6); // 이번주 토요일
+      const saturday = new Date(sunday);
+      saturday.setDate(sunday.getDate() + 6);
 
-    setDateRange(`${formatDate(sunday)} - ${formatDate(saturday)}`);
+      setDateRange(`${formatDate(sunday)} - ${formatDate(saturday)}`);
 
-    // 이번주 일~토요일까지의 날짜 배열 생성
-    const dates = [];
-    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+      const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+      const dates = [];
 
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(sunday);
-      date.setDate(sunday.getDate() + i);
-      const formattedDate = formatDate(date);
-      const fullDate = formatFullDate(date);
-      const emotion = "None";
-      const dayOfWeek = daysOfWeek[i];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(sunday);
+        date.setDate(sunday.getDate() + i);
 
-      dates.push({ date: formattedDate, emotion, fullDate, dayOfWeek });
-    }
+        const formattedDate = formatDate(date);
+        const fullDate = formatFullDate(date);
+        const dayOfWeek = daysOfWeek[i];
 
-    setWeekDates(dates);
+        try {
+          const data = await getEmotionRecordByDate(date);
+
+          const emotion = data?.emotion || "None";
+          console.log("emotion", date, emotion);
+          dates.push({ date: formattedDate, emotion, fullDate, dayOfWeek });
+        } catch (err) {
+          console.error("감정 데이터 요청 실패:", err);
+          dates.push({
+            date: formattedDate,
+            emotion: "None",
+            fullDate,
+            dayOfWeek,
+          });
+        }
+      }
+
+      setWeekDates(dates);
+    };
+
+    fetchEmotionRecords();
   }, []);
 
   return (
@@ -95,11 +113,17 @@ export default function DiaryPage() {
               className="w-[8px] h-[10px] align-middle"
             />
           </div>
-          <div className="emoji-container">
+          <div className="emoji-container mx-auto flex justify-between items-center mt-2">
             {weekDates.map(({ date, emotion, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}
-                onClick={() => router.push(`/diary/${fullDate}`)}
+                onClick={() => {
+                  if (emotion === "None") {
+                    router.push(`/diary/${fullDate}/create`);
+                  } else {
+                    router.push(`/diary/${fullDate}`);
+                  }
+                }}
                 className={`emoji-container-item`}
               >
                 <div className="flex flex-col items-center">
@@ -110,7 +134,7 @@ export default function DiaryPage() {
                     </div>
                   ) : (
                     <Image
-                      src={`/${emotion}.png`}
+                      src={`/Happy.png`}
                       alt="{happy}"
                       width={40}
                       height={34}
