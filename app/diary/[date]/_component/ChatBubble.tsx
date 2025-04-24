@@ -1,4 +1,4 @@
-import { Message } from "../page";
+import { Message } from "../create/page";
 
 const ChatBubble = ({ message }: { message: Message }) => {
   return (
