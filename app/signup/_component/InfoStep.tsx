@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { checkDuplicateEmail } from "../api/fetchAuth";
+import { checkDuplicateEmail } from "../../api/auth";
 import FormButton from "@/components/form/FormButton";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

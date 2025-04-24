@@ -21,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${notoSansKr.variable}`}>{children}</body>
+      <body className={`${notoSansKr.variable} h-screen max-w-md mx-auto`}>
+        {children}
+      </body>
     </html>
   );
 }

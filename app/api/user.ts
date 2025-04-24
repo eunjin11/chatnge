@@ -3,24 +3,23 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { ProfileResponse, ProfileUpdateData } from "@/constants/types";
+import { verifySession } from "./auth";
 
 const SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET_KEY || "your-secret-key"
 );
 
+export async function getUserEmail(): Promise<string> {
+  const verified = await verifySession();
+  if (verified) return verified.email as string;
+  else throw new Error("로그인이 필요합니다.");
+}
+
 export async function updateProfile(
   profileData: ProfileUpdateData
 ): Promise<ProfileResponse> {
   try {
-    // 현재 로그인된 사용자의 이메일 가져오기
-    const token = (await cookies()).get("access-token");
-    if (!token) {
-      return { error: "로그인이 필요합니다." };
-    }
-
-    // JWT 토큰 검증 및 사용자 정보 추출
-    const verified = await jwtVerify(token.value, SECRET_KEY);
-    const userEmail = verified.payload.email as string;
+    const userEmail = await getUserEmail();
 
     // 프로필 정보 업데이트
     const updatedUser = await prisma.user.update({
