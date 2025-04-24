@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { SignJWT } from "jose";
+import { jwtVerify, SignJWT } from "jose";
 import { UserData, UserResponse } from "@/constants/types";
 
 const SECRET_KEY = new TextEncoder().encode(
@@ -123,11 +123,16 @@ export async function verifySession() {
       return null;
     }
 
-    // JWT 토큰 검증 로직 추가 필요
+    const { payload } = await jwtVerify(token.value, SECRET_KEY);
 
-    return token;
+    return payload;
   } catch (error) {
     console.error("Session verification error:", error);
+    const cookieStore = cookies();
+    (await cookieStore).set("access-token", "", {
+      maxAge: 0,
+      path: "/", // 모든 경로에서 쿠키 제거
+    });
     return null;
   }
 }
