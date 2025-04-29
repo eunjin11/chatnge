@@ -5,8 +5,7 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import { useRouter } from "next/navigation";
 import BottomNaviation from "@/components/BottomNaviation";
-import { formatDate } from "@/utils/formatDate";
-import { formatFullDate } from "@/utils/formatFullDate";
+import { formatDateMMDD, formatDateYYYYMMDD } from "@/utils/formatDate";
 import TabNavigation from "@/app/diary/_component/TabNavigation";
 import DiaryCard from "@/app/diary/_component/DiaryCard";
 import MindLog from "@/app/diary/_component/MindLog";
@@ -39,7 +38,7 @@ export default function DiaryPage() {
       const saturday = new Date(sunday);
       saturday.setDate(sunday.getDate() + 6);
 
-      setDateRange(`${formatDate(sunday)} - ${formatDate(saturday)}`);
+      setDateRange(`${formatDateMMDD(sunday)} - ${formatDateMMDD(saturday)}`);
 
       const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
       const dates = [];
@@ -48,8 +47,8 @@ export default function DiaryPage() {
         const date = new Date(sunday);
         date.setDate(sunday.getDate() + i);
 
-        const formattedDate = formatDate(date);
-        const fullDate = formatFullDate(date);
+        const formattedDate = formatDateMMDD(date);
+        const fullDate = formatDateYYYYMMDD(date);
         const dayOfWeek = daysOfWeek[i];
 
         try {
