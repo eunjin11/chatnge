@@ -2,16 +2,13 @@
 import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
 import { getUserEmail } from "./user";
-import { WEEK_DAYS } from "@/constants/week";
-import { formatDateMMDD, formatDateYYYYMMDD } from "@/utils/formatDate";
-import { WeeklyEmotionSummary } from "@/types/emotion.dto";
-import { getStartAndEndOfDay } from "@/utils/date";
-
-interface EmotionRecord {
-  date: Date;
-  emotion: string | null;
-  userEmail?: string;
-}
+import { formatDateMMDD } from "@/utils/formatDate";
+import { EmotionRecord, WeeklyEmotionSummary } from "@/types/emotion.dto";
+import {
+  calculateWeekDates,
+  generateWeekData,
+  getStartAndEndOfDay,
+} from "@/utils/date";
 
 export async function findEmotionRecordsInRange(
   userEmail: string,
@@ -131,42 +128,7 @@ export async function getEmotionRecordByDate(
 export async function getWeeklyEmotionSummary(
   date: Date
 ): Promise<WeeklyEmotionSummary> {
-  // 날짜 계산 함수
-  const calculateWeekDates = (currentDate: Date) => {
-    const day = currentDate.getDay(); // 0 = Sunday
-
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(currentDate.getDate() - day);
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
-
-    return { startOfWeek, endOfWeek };
-  };
-
-  // 주간 데이터 생성 함수
-  const generateWeekData = (startDate: Date, records: EmotionRecord[] = []) => {
-    return Array.from({ length: 7 }).map((_, i) => {
-      const dateObj = new Date(startDate);
-      dateObj.setDate(startDate.getDate() + i);
-      const dateKey = dateObj.toISOString().split("T")[0];
-
-      const record = records.find(
-        (r) => r.date.toISOString().split("T")[0] === dateKey
-      );
-
-      return {
-        dayOfWeek: WEEK_DAYS[i],
-        date: formatDateMMDD(dateObj),
-        fullDate: formatDateYYYYMMDD(dateObj),
-        emotion: record?.emotion || null,
-      };
-    });
-  };
-
-  // 날짜 계산 실행
+  // 날짜 계산
   const { startOfWeek, endOfWeek } = calculateWeekDates(new Date(date));
 
   // 주간 범위 정보

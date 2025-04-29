@@ -1,3 +1,8 @@
+export interface EmotionRecord {
+  date: Date;
+  emotion: string | null;
+}
+
 export interface WeeklyEmotionItem {
   dayOfWeek: string; // ex: '월'
   date: string; // ex: '04.29'
