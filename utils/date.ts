@@ -33,11 +33,9 @@ export function generateWeekData(
   return Array.from({ length: 7 }).map((_, i) => {
     const dateObj = new Date(startDate);
     dateObj.setDate(startDate.getDate() + i);
-    const dateKey = dateObj.toISOString().split("T")[0];
+    const dateKey = formatDateYYYYMMDD(dateObj);
 
-    const record = records.find(
-      (r) => r.date.toISOString().split("T")[0] === dateKey
-    );
+    const record = records.find((r) => formatDateYYYYMMDD(r.date) === dateKey);
 
     return {
       dayOfWeek: WEEK_DAYS[i],
