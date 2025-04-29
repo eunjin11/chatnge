@@ -3,8 +3,14 @@ import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
 import { getUserEmail } from "./user";
 import { WEEK_DAYS } from "@/constants/week";
-import { formatDateMMDD } from "@/utils/formatDate";
+import { formatDateMMDD, formatDateYYYYMMDD } from "@/utils/formatDate";
 import { WeeklyEmotionSummary } from "@/types/emotion.dto";
+
+interface EmotionRecord {
+  date: Date;
+  emotion: string | null;
+  userEmail?: string;
+}
 
 export async function createEmotionRecord(
   emotionData: EmotionData
@@ -67,20 +73,54 @@ export async function getEmotionRecordByDate(
 export async function getWeeklyEmotionSummary(
   date: Date
 ): Promise<WeeklyEmotionSummary> {
-  try {
-    const userEmail = await getUserEmail();
+  // 날짜 계산 함수
+  const calculateWeekDates = (currentDate: Date) => {
+    const day = currentDate.getDay(); // 0 = Sunday
 
-    const current = new Date(date);
-    const day = current.getDay(); // 0 = Sunday
-
-    const startOfWeek = new Date(current);
-    startOfWeek.setDate(current.getDate() - day);
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - day);
     startOfWeek.setHours(0, 0, 0, 0);
 
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
+    return { startOfWeek, endOfWeek };
+  };
+
+  // 주간 데이터 생성 함수
+  const generateWeekData = (startDate: Date, records: EmotionRecord[] = []) => {
+    return Array.from({ length: 7 }).map((_, i) => {
+      const dateObj = new Date(startDate);
+      dateObj.setDate(startDate.getDate() + i);
+      const dateKey = dateObj.toISOString().split("T")[0];
+
+      const record = records.find(
+        (r) => r.date.toISOString().split("T")[0] === dateKey
+      );
+
+      return {
+        dayOfWeek: WEEK_DAYS[i],
+        date: formatDateMMDD(dateObj),
+        fullDate: formatDateYYYYMMDD(dateObj),
+        emotion: record?.emotion || null,
+      };
+    });
+  };
+
+  // 날짜 계산 실행
+  const { startOfWeek, endOfWeek } = calculateWeekDates(new Date(date));
+
+  // 주간 범위 정보
+  const weekRange = {
+    sunday: formatDateMMDD(startOfWeek),
+    saturday: formatDateMMDD(endOfWeek),
+  };
+
+  try {
+    const userEmail = await getUserEmail();
+
+    // 감정 기록 조회
     const records = await prisma.emotionRecord.findMany({
       where: {
         userEmail,
@@ -91,31 +131,16 @@ export async function getWeeklyEmotionSummary(
       },
     });
 
-    const summary = Array.from({ length: 7 }).map((_, i) => {
-      const dateObj = new Date(startOfWeek);
-      dateObj.setDate(startOfWeek.getDate() + i);
-      const dateKey = dateObj.toISOString().split("T")[0];
+    // 사용자 데이터로 주간 데이터 생성
+    const weekData = generateWeekData(startOfWeek, records);
 
-      const record = records.find(
-        (r) => r.date.toISOString().split("T")[0] === dateKey
-      );
-
-      return {
-        day: WEEK_DAYS[i],
-        date: formatDateMMDD(dateObj),
-        emotion: record?.emotion || null,
-      };
-    });
-
-    return {
-      weekRange: {
-        sunday: formatDateMMDD(startOfWeek),
-        saturday: formatDateMMDD(endOfWeek),
-      },
-      summary,
-    };
+    return { weekRange, weekData };
   } catch (error) {
     console.error("Error fetching weekly emotion summary:", error);
-    throw new Error("주간 감정 요약을 불러오는 중 오류가 발생했습니다.");
+
+    // 오류 발생 시 빈 데이터로 주간 데이터 생성
+    const weekData = generateWeekData(startOfWeek);
+
+    return { weekRange, weekData };
   }
 }
