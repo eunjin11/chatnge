@@ -5,6 +5,7 @@ import { getUserEmail } from "./user";
 import { WEEK_DAYS } from "@/constants/week";
 import { formatDateMMDD, formatDateYYYYMMDD } from "@/utils/formatDate";
 import { WeeklyEmotionSummary } from "@/types/emotion.dto";
+import { getStartAndEndOfDay } from "@/utils/date";
 
 interface EmotionRecord {
   date: Date;
@@ -12,27 +13,96 @@ interface EmotionRecord {
   userEmail?: string;
 }
 
+export async function findEmotionRecordsInRange(
+  userEmail: string,
+  start: Date,
+  end: Date
+) {
+  return prisma.emotionRecord.findMany({
+    where: {
+      userEmail,
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+  });
+}
+
+export async function findEmotionRecordByDate(
+  userEmail: string,
+  date: Date
+): Promise<EmotionRecord | null> {
+  const { start, end } = getStartAndEndOfDay(date);
+  return prisma.emotionRecord.findFirst({
+    where: {
+      userEmail,
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+  });
+}
+
 export async function createEmotionRecord(
   emotionData: EmotionData
 ): Promise<EmotionResponse> {
   try {
-    const newEmotionRecord = await prisma.emotionRecord.create({
-      data: {
-        userEmail: await getUserEmail(),
-        emotion: emotionData.emotion || "",
-        date: emotionData.date || new Date(),
-        reason: emotionData.reason || "",
-        feeling: emotionData.feeling || "",
-        detailedEmotions: emotionData.detailedEmotions || [],
-        oneLineRecord: emotionData.oneLineRecord || "",
-        aiSummary: emotionData.aiSummary || "",
+    const userEmail = await getUserEmail();
+    const date = emotionData.date || new Date();
+
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+    // 기존 기록이 있는지 확인
+    const existingRecord = await prisma.emotionRecord.findFirst({
+      where: {
+        userEmail,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
       },
     });
 
-    return newEmotionRecord;
+    if (existingRecord) {
+      // 기록이 있으면 업데이트
+      const updatedRecord = await prisma.emotionRecord.update({
+        where: {
+          id: existingRecord.id,
+        },
+        data: {
+          emotion: emotionData.emotion || "",
+          reason: emotionData.reason || "",
+          feeling: emotionData.feeling || "",
+          detailedEmotions: emotionData.detailedEmotions || [],
+          oneLineRecord: emotionData.oneLineRecord || "",
+          aiSummary: emotionData.aiSummary || "",
+        },
+      });
+
+      return updatedRecord;
+    } else {
+      // 없으면 새로 생성
+      const newRecord = await prisma.emotionRecord.create({
+        data: {
+          userEmail,
+          emotion: emotionData.emotion || "",
+          date: date,
+          reason: emotionData.reason || "",
+          feeling: emotionData.feeling || "",
+          detailedEmotions: emotionData.detailedEmotions || [],
+          oneLineRecord: emotionData.oneLineRecord || "",
+          aiSummary: emotionData.aiSummary || "",
+        },
+      });
+
+      return newRecord;
+    }
   } catch (error) {
-    console.error("Error creating emotion record:", error);
-    throw new Error("감정 기록을 생성하는 중 오류가 발생했습니다.");
+    console.error("Error creating or updating emotion record:", error);
+    throw new Error("감정 기록 처리 중 오류가 발생했습니다.");
   }
 }
 
@@ -48,22 +118,10 @@ export async function getAiSummary(emotionData: EmotionData): Promise<string> {
 
 export async function getEmotionRecordByDate(
   date: Date
-): Promise<EmotionResponse | null> {
+): Promise<EmotionRecord | null> {
   try {
     const userEmail = await getUserEmail();
-    const startOfDay = new Date(date.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(date.setHours(23, 59, 59, 999));
-    const emotionRecord = await prisma.emotionRecord.findFirst({
-      where: {
-        userEmail,
-        date: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-    });
-
-    return emotionRecord || null;
+    return await findEmotionRecordByDate(userEmail, date);
   } catch (error) {
     console.error("Error fetching emotion record:", error);
     throw new Error("감정 기록을 불러오는 중 오류가 발생했습니다.");
@@ -121,15 +179,11 @@ export async function getWeeklyEmotionSummary(
     const userEmail = await getUserEmail();
 
     // 감정 기록 조회
-    const records = await prisma.emotionRecord.findMany({
-      where: {
-        userEmail,
-        date: {
-          gte: startOfWeek,
-          lte: endOfWeek,
-        },
-      },
-    });
+    const records = await findEmotionRecordsInRange(
+      userEmail,
+      startOfWeek,
+      endOfWeek
+    );
 
     // 사용자 데이터로 주간 데이터 생성
     const weekData = generateWeekData(startOfWeek, records);
