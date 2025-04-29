@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCurrentUserProfile } from "./api/user";
+import { getCurrentUserProfile } from "./services/user";
 
 const formatDate = (date: Date) => {
   const year = date.getFullYear();

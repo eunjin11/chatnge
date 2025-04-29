@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import FormButton from "@/components/form/FormButton";
-import { createEmotionRecord, getAiSummary } from "@/app/api/emotion";
+import { createEmotionRecord, getAiSummary } from "@/app/services/emotion";
 import {
   DetailedFeeling,
   EmotionResponse,
