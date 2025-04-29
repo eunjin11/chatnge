@@ -3,7 +3,7 @@ import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
 import { getUserEmail } from "./user";
 import { formatDateMMDD } from "@/utils/formatDate";
-import { EmotionRecord, WeeklyEmotionSummary } from "@/types/emotion.dto";
+import { WeeklyEmotionSummary } from "@/types/emotion.dto";
 import {
   calculateWeekDates,
   generateWeekData,
