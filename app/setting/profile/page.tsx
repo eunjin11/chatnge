@@ -7,7 +7,7 @@ import BirthDateStep from "./_component/BirthDateStep";
 import MotivationStep from "./_component/MotivationStep";
 import MedicationStatusStep from "./_component/MedicationStatusStep";
 import ConfirmStep from "./_component/ConfirmStep";
-import { updateProfile } from "@/app/api/user";
+import { updateProfile } from "@/app/services/user";
 import {
   MedicationStatus,
   ProfileUpdateData,
