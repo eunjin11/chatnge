@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/components/Header";
-import { login } from "@/app/services/auth";
+import { login } from "@/services/auth";
 import Link from "next/link";
 import FormInput from "@/components/form/FormInput";
 import FormButton from "@/components/form/FormButton";
