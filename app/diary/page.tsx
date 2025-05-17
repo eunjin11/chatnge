@@ -1,4 +1,4 @@
-import { getWeeklyEmotionSummary } from "../services/emotion";
+import { getWeeklyEmotionSummary } from "@/services/emotion";
 import DiaryClient from "./_component/DiaryClient";
 
 export default async function DiaryPage() {
