@@ -2,22 +2,22 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import FormButton from "@/components/form/FormButton";
-import { createEmotionRecord, getAiSummary } from "@/services/emotion";
-import {
-  DetailedFeeling,
-  EmotionResponse,
-  EmotionSelectiomStep,
-} from "@/constants/types";
-import MindReport from "../_component/MindReport";
 import { emotionColorVariants } from "@/constants/emotionColorVariant";
 import {
   detailedFeelingOptions,
   EmotionSelection,
   feelingSelections,
 } from "@/constants/selections";
+import {
+  DetailedFeeling,
+  EmotionResponse,
+  EmotionSelectiomStep,
+} from "@/constants/types";
+import { createEmotionRecord, getAiSummary } from "@/services/emotion";
+import { ChevronLeft, Search, ChevronRight } from "lucide-react";
 import ChatBubble from "../_component/ChatBubble";
+import MindReport from "../_component/MindReport";
 
 // 타입 정의
 interface Emotion {
@@ -56,7 +56,7 @@ const DiaryDatePage = () => {
   const [messagesAfterDetailedFeelings, setMessagesAfterDetailedFeelings] =
     useState<Message[]>([]);
   const [selectionStep, setSelectionStep] = useState<EmotionSelectiomStep>(
-    EmotionSelectiomStep.SELECTING_EMOTION
+    EmotionSelectiomStep.SELECTING_EMOTION,
   );
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<string>();
@@ -74,7 +74,7 @@ const DiaryDatePage = () => {
       reason: selectedDetail || "",
       feeling: selectedFeeling || "",
       detailedEmotions: userDetailedFeelings.map(
-        (feeling) => feeling.text || ""
+        (feeling) => feeling.text || "",
       ),
       oneLineRecord: oneLineRecord,
     });
@@ -85,7 +85,7 @@ const DiaryDatePage = () => {
       reason: selectedDetail || "",
       feeling: selectedFeeling || "",
       detailedEmotions: userDetailedFeelings.map(
-        (feeling) => feeling.text || ""
+        (feeling) => feeling.text || "",
       ),
       oneLineRecord: oneLineRecord,
       aiSummary: summary,
@@ -159,11 +159,11 @@ const DiaryDatePage = () => {
 
   const toggleDetailedFeeling = (feeling: DetailedFeeling) => {
     const isSelected = userDetailedFeelings.some(
-      (f) => f.text === feeling.text && f.emotion === feeling.emotion
+      (f) => f.text === feeling.text && f.emotion === feeling.emotion,
     );
     if (isSelected) {
       setUserDetailedFeelings((prev) =>
-        prev.filter((f) => f.text !== feeling.text)
+        prev.filter((f) => f.text !== feeling.text),
       );
     } else {
       setUserDetailedFeelings((prev) => [...prev, feeling]);
@@ -392,7 +392,7 @@ const DiaryDatePage = () => {
                 <div className="flex flex-wrap gap-2 w-[90%] justify-end">
                   {detailedFeelingOptions.map((detailedFeeling, index) => {
                     const isSelected = userDetailedFeelings.some(
-                      (f) => f.text === detailedFeeling.text
+                      (f) => f.text === detailedFeeling.text,
                     );
                     const isMaxSelected = userDetailedFeelings.length >= 3;
                     return (

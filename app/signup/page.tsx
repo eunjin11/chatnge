@@ -1,11 +1,12 @@
 "use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import { SignUpStep } from "@/constants/types";
 import { signup } from "@/services/auth";
 import InfoStep from "./_component/InfoStep";
 import PWStep from "./_component/PWStep";
-import { SignUpStep } from "@/constants/types";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const SignUpPage = () => {
       const response = await signup(
         registerData.email,
         registerData.name,
-        password
+        password,
       );
       console.log(response);
       router.push("/setting/profile");
