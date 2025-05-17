@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: NextRequest, { params }: { params: Promise }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ email: string }> },
+) {
   const { email } = await params;
   if (!email) {
     return NextResponse.json(
       { error: "이메일이 필요합니다." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -28,7 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise }) {
     if (!user) {
       return NextResponse.json(
         { error: "유저를 찾을 수 없습니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
     return NextResponse.json(user);
