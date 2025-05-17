@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { email: string } }
+  { params }: { params: Promise<{ email: string }> }
 ) {
-  const { email } = params;
+  const { email } = await params;
   if (!email) {
     return NextResponse.json(
       { error: "이메일이 필요합니다." },
@@ -36,6 +36,7 @@ export async function GET(
     }
     return NextResponse.json(user);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: "서버 오류" }, { status: 500 });
   }
 }
