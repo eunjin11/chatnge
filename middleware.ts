@@ -8,7 +8,6 @@ export function middleware(req: NextRequest) {
   const isProtected = protectedPaths.some((path) =>
     req.nextUrl.pathname.startsWith(path)
   );
-  console.log("isProtected", isProtected, token);
 
   if (isProtected && !token) {
     // 로그인 안 된 경우 로그인 페이지로 리디렉션
