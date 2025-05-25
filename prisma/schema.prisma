@@ -1,48 +1,63 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  email           String   @id @unique
-  name            String
-  nickname        String?
-  password        String
-  birthdate       DateTime
-  motivation      String[]  @default([])
-  status          String?
-  medicationStatus String @default("UNKNOWN")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  email            String          @id @unique
+  name             String
+  nickname         String?
+  password         String
+  birthdate        DateTime
+  motivation       String[]        @default([])
+  status           String?
+  medicationStatus String          @default("UNKNOWN")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  EmotionRecord    EmotionRecord[]
+  ChatMessage      ChatMessage[]
 
   @@map("users")
-  EmotionRecord   EmotionRecord[]
 }
 
 model EmotionRecord {
-  id               Int               @id @default(autoincrement())
+  id               Int      @id @default(autoincrement())
   userEmail        String
   date             DateTime
   emotion          String
   reason           String
   feeling          String
-  detailedEmotions String[]          @default([])
-  oneLineRecord    String
+  detailedEmotions String[] @default([])
   aiSummary        String?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  oneLineRecord    String
+  user             User     @relation(fields: [userEmail], references: [email])
 
-  user             User @relation(fields: [userEmail], references: [email])
+  @@index([userEmail])
   @@map("emotion_records")
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userEmail String
+  role      ChatRole
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userEmail], references: [email])
+
+  @@index([userEmail])
+  @@map("chat_messages")
 }
