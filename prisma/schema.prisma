@@ -44,8 +44,8 @@ model EmotionRecord {
 }
 
 enum ChatRole {
-  user
-  assistant
+  USER
+  ASSISTANT
 }
 
 model ChatMessage {
