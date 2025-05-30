@@ -57,8 +57,8 @@ export async function getEmotionRecordByDate(
     );
     return emotionRecord;
   } catch (error) {
-    console.error("Error creating or updating emotion record:", error);
-    throw new Error("감정 기록 처리 중 오류가 발생했습니다.");
+    console.error("Error fetching emotion record:", error);
+    throw new Error("감정 기록 조회 중 오류가 발생했습니다.");
   }
 }
 
