@@ -58,6 +58,12 @@ export default function MainClient({ weekRange, weekData }: MainClientProps) {
             />
           </div>
           <div className="emoji-container mx-auto flex justify-between items-center mt-2">
+            {weekData.length === 0 ? (
+              <div className="text-center text-gray-500 w-full">
+                데이터를 불러오는 중...
+              </div>
+            ) : (
+              <>
             {weekData.map(({ date, emotion, fullDate, dayOfWeek }) => (
               <button
                 key={fullDate}
@@ -88,9 +94,10 @@ export default function MainClient({ weekRange, weekData }: MainClientProps) {
 
                   <span className="text-[10px] mt-1 text-gray-500">{date}</span>
                 </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </>
+          )}
         </div>
         <MindLog />
       </div>
