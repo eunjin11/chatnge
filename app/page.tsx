@@ -1,4 +1,4 @@
-import DiaryClient from "@/app/diary/_component/DiaryClient";
+import DiaryClient from "@/app/_component/MainClient";
 import BottomNavigation from "@/components/BottomNavigation";
 import { getWeeklyEmotionSummary } from "@/services/emotion";
 

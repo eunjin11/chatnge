@@ -3,10 +3,13 @@
 import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
 import { WeeklyEmotionSummary } from "@/types/emotion.dto";
+import { MonthlyEmotionSummary } from "@/types/emotion.dto";
 import {
   calculateWeekDates,
   generateWeekData,
   getStartAndEndOfDay,
+  calculateMonthDates,
+  generateMonthData,
 } from "@/utils/date";
 import { formatDateMMDD } from "@/utils/formatDate";
 import { getUserEmail } from "./user";
@@ -152,5 +155,41 @@ export async function getWeeklyEmotionSummary(
     const weekData = generateWeekData(startOfWeek);
 
     return { weekRange, weekData };
+  }
+}
+
+export async function getMonthlyEmotionSummary(
+  date: Date,
+): Promise<MonthlyEmotionSummary> {
+  // 날짜 계산
+  const { startOfMonth, endOfMonth } = calculateMonthDates(new Date(date));
+
+  // 월간 범위 정보
+  const monthRange = {
+    firstDay: formatDateMMDD(startOfMonth),
+    lastDay: formatDateMMDD(endOfMonth),
+  };
+
+  try {
+    const userEmail = await getUserEmail();
+
+    // 감정 기록 조회
+    const records = await findEmotionRecordsInRange(
+      userEmail,
+      startOfMonth,
+      endOfMonth,
+    );
+
+    // 사용자 데이터로 월간 데이터 생성
+    const monthData = generateMonthData(startOfMonth, records);
+
+    return { monthRange, monthData };
+  } catch (error) {
+    console.error("Error fetching monthly emotion summary:", error);
+
+    // 오류 발생 시 빈 데이터로 월간 데이터 생성
+    const monthData = generateMonthData(startOfMonth);
+
+    return { monthRange, monthData };
   }
 }
