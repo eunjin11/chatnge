@@ -1,4 +1,4 @@
-import { Message } from "../create/page";
+import { Message } from "@/types/message";
 
 const ChatBubble = ({ message }: { message: Message }) => {
   return (

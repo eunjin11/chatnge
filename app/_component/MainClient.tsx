@@ -64,40 +64,42 @@ export default function MainClient({ weekRange, weekData }: MainClientProps) {
               </div>
             ) : (
               <>
-            {weekData.map(({ date, emotion, fullDate, dayOfWeek }) => (
-              <button
-                key={fullDate}
-                onClick={() => {
-                  if (emotion === null) {
-                    router.push(`/diary/${fullDate}/create`);
-                  } else {
-                    router.push(`/diary/${fullDate}`);
-                  }
-                }}
-                className={`emoji-container-item cursor-pointer`}
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-sm my-1">{dayOfWeek}</span>
-                  {!emotion ? (
-                    <div className="w-[35px] h-[35px] bg-[#D9D9D9] rounded-[10px] text-2xl flex items-center justify-center font-extrabold text-gray-600">
-                      <div>+</div>
+                {weekData.map(({ date, emotion, fullDate, dayOfWeek }) => (
+                  <button
+                    key={fullDate}
+                    onClick={() => {
+                      if (emotion === null) {
+                        router.push(`/diary/${fullDate}/create`);
+                      } else {
+                        router.push(`/diary/${fullDate}`);
+                      }
+                    }}
+                    className={`emoji-container-item cursor-pointer`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <span className="text-sm my-1">{dayOfWeek}</span>
+                      {!emotion ? (
+                        <div className="w-[35px] h-[35px] bg-[#D9D9D9] rounded-[10px] text-2xl flex items-center justify-center font-extrabold text-gray-600">
+                          <div>+</div>
+                        </div>
+                      ) : (
+                        <Image
+                          src={`/images/${emotion}.png`}
+                          alt={emotion}
+                          width={35}
+                          height={35}
+                          className="w-[35px] h-[35px]"
+                        />
+                      )}
+                      <span className="text-[10px] mt-1 text-gray-500">
+                        {date}
+                      </span>
                     </div>
-                  ) : (
-                    <Image
-                      src={`/images/${emotion}.png`}
-                      alt={emotion}
-                      width={35}
-                      height={35}
-                      className="w-[35px] h-[35px]"
-                    />
-                  )}
-
-                  <span className="text-[10px] mt-1 text-gray-500">{date}</span>
-                </div>
-                </button>
-              ))}
-            </>
-          )}
+                  </button>
+                ))}
+              </>
+            )}
+          </div>
         </div>
         <MindLog />
       </div>
