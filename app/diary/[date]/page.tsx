@@ -5,11 +5,11 @@ import { redirect, useParams } from "next/navigation";
 import BottomNavigation from "@/components/BottomNavigation";
 import { EmotionResponse } from "@/constants/types";
 import { getEmotionRecordByDate } from "@/services/emotion";
+import { Message } from "@/types/message";
 import { formatKoreanDate } from "@/utils/formatDate";
 import DiaryDate from "../_component/DiaryDate";
 import DiaryHeader from "../_component/DiaryHeader";
 import ChatBubble from "./_component/ChatBubble";
-import { Message } from "./create/page";
 
 const DiaryViewPage = () => {
   const params = useParams();

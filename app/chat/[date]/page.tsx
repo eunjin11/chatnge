@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BottomNavigation from "@/components/BottomNavigation";
+import { Message } from "@/types/message";
 import { formatKoreanDate } from "@/utils/formatDate";
 import ChatBubble from "../../diary/[date]/_component/ChatBubble";
-import { Message } from "../../diary/[date]/create/page";
 import DiaryDate from "../../diary/_component/DiaryDate";
 import DiaryHeader from "../../diary/_component/DiaryHeader";
 

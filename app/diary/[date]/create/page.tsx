@@ -15,6 +15,7 @@ import {
   EmotionSelectiomStep,
 } from "@/constants/types";
 import { createEmotionRecord, getAiSummary } from "@/services/emotion";
+import { Message } from "@/types/message";
 import { formatKoreanDate } from "@/utils/formatDate";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import DiaryDate from "../../_component/DiaryDate";
@@ -28,13 +29,6 @@ interface Emotion {
   text: string;
   emoji: string;
   details?: string[];
-}
-
-export interface Message {
-  id: number;
-  text: string;
-  isUser: boolean;
-  emoji?: string;
 }
 
 const DiaryDatePage = () => {
