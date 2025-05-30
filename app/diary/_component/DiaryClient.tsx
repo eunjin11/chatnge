@@ -18,7 +18,7 @@ function getWeeks(monthData: MonthlyEmotionItem[]) {
   const weeks: MonthlyEmotionItem[][] = [];
   let week: (MonthlyEmotionItem | null)[] = Array(firstDay).fill(null);
 
-  monthData.forEach((item, idx) => {
+  monthData.forEach((item) => {
     week.push(item);
     if (week.length === 7) {
       weeks.push(week as MonthlyEmotionItem[]);
