@@ -5,6 +5,8 @@ import { redirect, useParams } from "next/navigation";
 import BottomNavigation from "@/components/BottomNavigation";
 import { EmotionResponse } from "@/constants/types";
 import { getEmotionRecordByDate } from "@/services/emotion";
+import { formatKoreanDate } from "@/utils/formatDate";
+import DiaryDate from "../_component/DiaryDate";
 import DiaryHeader from "../_component/DiaryHeader";
 import ChatBubble from "./_component/ChatBubble";
 import { Message } from "./create/page";
@@ -72,6 +74,7 @@ const DiaryViewPage = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       <DiaryHeader />
+      <DiaryDate date={formatKoreanDate(date as string)} />
       <div className="flex-1 p-4 space-y-2">
         {messages.map((message) => (
           <ChatBubble key={message.id} message={message} />

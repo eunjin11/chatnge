@@ -92,7 +92,6 @@ export default function DiaryClient({ weekRange, weekData }: DiaryClientProps) {
             ))}
           </div>
         </div>
-
         <MindLog />
       </div>
     </div>

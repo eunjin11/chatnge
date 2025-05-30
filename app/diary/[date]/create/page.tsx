@@ -15,7 +15,8 @@ import {
   EmotionSelectiomStep,
 } from "@/constants/types";
 import { createEmotionRecord, getAiSummary } from "@/services/emotion";
-import { ChevronLeft, Search, ChevronRight } from "lucide-react";
+import { formatKoreanDate } from "@/utils/formatDate";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import DiaryDate from "../../_component/DiaryDate";
 import DiaryHeader from "../../_component/DiaryHeader";
 import ChatBubble from "../_component/ChatBubble";
@@ -42,7 +43,6 @@ const DiaryDatePage = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // ========== 상태(State) 그룹 ==========
-  const [formattedDate, setFormattedDate] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -267,17 +267,6 @@ const DiaryDatePage = () => {
   };
 
   // ========== useEffect 훅 ==========
-  // 날짜 포맷팅
-  useEffect(() => {
-    if (typeof date === "string") {
-      // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
-      const dateObj = new Date(date);
-      const year = dateObj.getFullYear();
-      const month = dateObj.getMonth() + 1;
-      const day = dateObj.getDate();
-      setFormattedDate(`${year}년 ${month}월 ${day}일`);
-    }
-  }, [date]);
 
   // 메시지가 추가될 때마다 스크롤을 맨 아래로 내리기
   useEffect(() => {
@@ -297,7 +286,7 @@ const DiaryDatePage = () => {
       <DiaryHeader />
 
       {/* 날짜 표시 */}
-      <DiaryDate date={formattedDate} />
+      <DiaryDate date={formatKoreanDate(date as string)} />
 
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex overflow-y-auto flex-col">
