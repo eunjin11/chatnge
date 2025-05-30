@@ -1,19 +1,20 @@
 "use server";
+
 import { EmotionData, EmotionResponse } from "@/constants/types";
 import { prisma } from "@/lib/prisma";
-import { getUserEmail } from "./user";
-import { formatDateMMDD } from "@/utils/formatDate";
 import { WeeklyEmotionSummary } from "@/types/emotion.dto";
 import {
   calculateWeekDates,
   generateWeekData,
   getStartAndEndOfDay,
 } from "@/utils/date";
+import { formatDateMMDD } from "@/utils/formatDate";
+import { getUserEmail } from "./user";
 
 export async function findEmotionRecordsInRange(
   userEmail: string,
   start: Date,
-  end: Date
+  end: Date,
 ) {
   return prisma.emotionRecord.findMany({
     where: {
@@ -28,7 +29,7 @@ export async function findEmotionRecordsInRange(
 
 export async function findEmotionRecordByDate(
   userEmail: string,
-  date: Date
+  date: Date,
 ): Promise<EmotionResponse | null> {
   const { start, end } = getStartAndEndOfDay(date);
   return prisma.emotionRecord.findFirst({
@@ -42,8 +43,24 @@ export async function findEmotionRecordByDate(
   });
 }
 
+export async function getEmotionRecordByDate(
+  date: Date,
+): Promise<EmotionResponse | null> {
+  try {
+    const userEmail = await getUserEmail();
+    const emotionRecord = await findEmotionRecordByDate(
+      userEmail,
+      new Date(date),
+    );
+    return emotionRecord;
+  } catch (error) {
+    console.error("Error creating or updating emotion record:", error);
+    throw new Error("감정 기록 처리 중 오류가 발생했습니다.");
+  }
+}
+
 export async function createEmotionRecord(
-  emotionData: EmotionData
+  emotionData: EmotionData,
 ): Promise<EmotionResponse> {
   try {
     const userEmail = await getUserEmail();
@@ -103,7 +120,7 @@ export async function getAiSummary(emotionData: EmotionData): Promise<string> {
 }
 
 export async function getWeeklyEmotionSummary(
-  date: Date
+  date: Date,
 ): Promise<WeeklyEmotionSummary> {
   // 날짜 계산
   const { startOfWeek, endOfWeek } = calculateWeekDates(new Date(date));
@@ -121,7 +138,7 @@ export async function getWeeklyEmotionSummary(
     const records = await findEmotionRecordsInRange(
       userEmail,
       startOfWeek,
-      endOfWeek
+      endOfWeek,
     );
 
     // 사용자 데이터로 주간 데이터 생성

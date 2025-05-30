@@ -7,7 +7,6 @@ import DiaryCard from "@/app/diary/_component/DiaryCard";
 import MindLog from "@/app/diary/_component/MindLog";
 import MonthResolution from "@/app/diary/_component/MonthResolution";
 import TabNavigation from "@/app/diary/_component/TabNavigation";
-import BottomNaviation from "@/components/BottomNaviation";
 import Header from "@/components/Header";
 import { WeeklyEmotionItem } from "@/types/emotion.dto";
 
@@ -69,7 +68,7 @@ export default function DiaryClient({ weekRange, weekData }: DiaryClientProps) {
                     router.push(`/diary/${fullDate}`);
                   }
                 }}
-                className={`emoji-container-item`}
+                className={`emoji-container-item cursor-pointer`}
               >
                 <div className="flex flex-col items-center">
                   <span className="text-sm my-1">{dayOfWeek}</span>
@@ -79,11 +78,11 @@ export default function DiaryClient({ weekRange, weekData }: DiaryClientProps) {
                     </div>
                   ) : (
                     <Image
-                      src={`/Happy.png`}
-                      alt="{happy}"
-                      width={40}
-                      height={40}
-                      className="w-[40px] h-[34px]"
+                      src={`/images/${emotion}.png`}
+                      alt={emotion}
+                      width={35}
+                      height={35}
+                      className="w-[35px] h-[35px]"
                     />
                   )}
 
@@ -96,7 +95,6 @@ export default function DiaryClient({ weekRange, weekData }: DiaryClientProps) {
 
         <MindLog />
       </div>
-      <BottomNaviation />
     </div>
   );
 }

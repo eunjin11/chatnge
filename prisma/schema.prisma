@@ -51,6 +51,7 @@ enum ChatRole {
 model ChatMessage {
   id        Int      @id @default(autoincrement())
   userEmail String
+  date      DateTime
   role      ChatRole
   content   String
   createdAt DateTime @default(now())

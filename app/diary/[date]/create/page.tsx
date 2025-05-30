@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import FormButton from "@/components/form/FormButton";
 import { emotionColorVariants } from "@/constants/emotionColorVariant";
 import {
@@ -16,6 +16,8 @@ import {
 } from "@/constants/types";
 import { createEmotionRecord, getAiSummary } from "@/services/emotion";
 import { ChevronLeft, Search, ChevronRight } from "lucide-react";
+import DiaryDate from "../../_component/DiaryDate";
+import DiaryHeader from "../../_component/DiaryHeader";
 import ChatBubble from "../_component/ChatBubble";
 import MindReport from "../_component/MindReport";
 
@@ -36,7 +38,6 @@ export interface Message {
 
 const DiaryDatePage = () => {
   const params = useParams();
-  const router = useRouter();
   const { date } = params;
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -293,20 +294,10 @@ const DiaryDatePage = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* 헤더 */}
-      <header className="flex items-center p-4 border-gray-200 shadow-xs">
-        <button onClick={() => router.back()} className="mr-auto">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="text-lg font-bold flex-1 text-center">감정기록</h1>
-        <button className="ml-auto">
-          <Search size={24} />
-        </button>
-      </header>
+      <DiaryHeader />
 
       {/* 날짜 표시 */}
-      <div className="text-center py-4 border-b border-gray-200">
-        <p className="text-sm">{formattedDate}</p>
-      </div>
+      <DiaryDate date={formattedDate} />
 
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex overflow-y-auto flex-col">
