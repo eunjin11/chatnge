@@ -1,4 +1,4 @@
-import DiaryClient from "@/app/_component/MainClient";
+import MainClient from "@/app/_component/MainClient";
 import BottomNavigation from "@/components/BottomNavigation";
 import { getWeeklyEmotionSummary } from "@/services/emotion";
 
@@ -7,7 +7,7 @@ export default async function MainPage() {
 
   return (
     <>
-      <DiaryClient
+      <MainClient
         weekRange={`${weekRange.sunday} - ${weekRange.saturday}`}
         weekData={weekData}
       />
