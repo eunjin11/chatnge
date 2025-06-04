@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import FormButton from "@/components/form/FormButton";
 import { emotionColorVariants } from "@/constants/emotionColorVariant";
 import {
@@ -15,7 +15,11 @@ import {
   EmotionSelectiomStep,
 } from "@/constants/types";
 import { createEmotionRecord, getAiSummary } from "@/services/emotion";
-import { ChevronLeft, Search, ChevronRight } from "lucide-react";
+import { Message } from "@/types/message";
+import { formatKoreanDate } from "@/utils/formatDate";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import DiaryDate from "../../_component/DiaryDate";
+import DiaryHeader from "../../_component/DiaryHeader";
 import ChatBubble from "../_component/ChatBubble";
 import MindReport from "../_component/MindReport";
 
@@ -27,21 +31,12 @@ interface Emotion {
   details?: string[];
 }
 
-export interface Message {
-  id: number;
-  text: string;
-  isUser: boolean;
-  emoji?: string;
-}
-
 const DiaryDatePage = () => {
   const params = useParams();
-  const router = useRouter();
   const { date } = params;
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // ========== 상태(State) 그룹 ==========
-  const [formattedDate, setFormattedDate] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -266,17 +261,6 @@ const DiaryDatePage = () => {
   };
 
   // ========== useEffect 훅 ==========
-  // 날짜 포맷팅
-  useEffect(() => {
-    if (typeof date === "string") {
-      // YYYY-MM-DD 형식에서 YYYY년 M월 D일 형식으로 변환
-      const dateObj = new Date(date);
-      const year = dateObj.getFullYear();
-      const month = dateObj.getMonth() + 1;
-      const day = dateObj.getDate();
-      setFormattedDate(`${year}년 ${month}월 ${day}일`);
-    }
-  }, [date]);
 
   // 메시지가 추가될 때마다 스크롤을 맨 아래로 내리기
   useEffect(() => {
@@ -293,20 +277,10 @@ const DiaryDatePage = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* 헤더 */}
-      <header className="flex items-center p-4 border-gray-200 shadow-xs">
-        <button onClick={() => router.back()} className="mr-auto">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="text-lg font-bold flex-1 text-center">감정기록</h1>
-        <button className="ml-auto">
-          <Search size={24} />
-        </button>
-      </header>
+      <DiaryHeader />
 
       {/* 날짜 표시 */}
-      <div className="text-center py-4 border-b border-gray-200">
-        <p className="text-sm">{formattedDate}</p>
-      </div>
+      <DiaryDate date={formatKoreanDate(date as string)} />
 
       {/* 메인 컨텐츠 영역 */}
       <div className="flex-1 flex overflow-y-auto flex-col">
