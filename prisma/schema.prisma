@@ -5,8 +5,6 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -31,25 +29,18 @@ model User {
 
 model EmotionRecord {
   id               Int      @id @default(autoincrement())
-  id               Int      @id @default(autoincrement())
   userEmail        String
   date             DateTime
   emotion          String
   reason           String
   feeling          String
   detailedEmotions String[] @default([])
-  detailedEmotions String[] @default([])
   aiSummary        String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   oneLineRecord    String
   user             User     @relation(fields: [userEmail], references: [email])
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  oneLineRecord    String
-  user             User     @relation(fields: [userEmail], references: [email])
 
-  @@index([userEmail])
   @@index([userEmail])
   @@map("emotion_records")
 }
