@@ -17,3 +17,17 @@ export interface WeeklyEmotionSummary {
   };
   weekData: WeeklyEmotionItem[];
 }
+
+export interface MonthlyEmotionItem {
+  day: string; // ex: '01'
+  fullDate: string; // ex: '2024-04-01'
+  emotion: string | null;
+}
+
+export interface MonthlyEmotionSummary {
+  monthRange: {
+    firstDay: string; // ex: '04.01'
+    lastDay: string; // ex: '04.30'
+  };
+  monthData: MonthlyEmotionItem[];
+}
