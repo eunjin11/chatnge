@@ -62,6 +62,70 @@ export async function addChatMessage(
   }
 }
 
+export async function sendMessageAndGetAIResponse(
+  sessionId: string,
+  userMessage: string,
+) {
+  try {
+    const userEmail = await getUserEmail();
+
+    // 1. 사용자 메시지를 데이터베이스에 저장
+    const userMessageResult = await prisma.chat_messages.create({
+      data: {
+        userEmail: userEmail,
+        role: "USER",
+        content: userMessage,
+        date: new Date(),
+        session_id: sessionId,
+        updatedAt: new Date(),
+      },
+    });
+
+    // 2. AI Assistant API 호출
+    const aiResponse = await fetchAIResponse(userMessage, sessionId);
+
+    if (!aiResponse.success) {
+      throw new Error("AI 응답을 받지 못했습니다.");
+    }
+
+    // 3. AI 응답을 데이터베이스에 저장
+    const aiMessageResult = await prisma.chat_messages.create({
+      data: {
+        userEmail: userEmail,
+        role: "ASSISTANT",
+        content: aiResponse.message,
+        date: new Date(),
+        session_id: sessionId,
+        updatedAt: new Date(),
+      },
+    });
+
+    // 4. conversation_sessions의 message_count 업데이트 (사용자 + AI 메시지)
+    await prisma.conversation_sessions.update({
+      where: { session_id: sessionId },
+      data: {
+        message_count: {
+          increment: 2,
+        },
+      },
+    });
+
+    return {
+      success: true,
+      userMessage: userMessageResult,
+      aiResponse: aiMessageResult,
+      aiMessage: aiResponse.message,
+    };
+  } catch (error) {
+    console.error("메시지 전송 및 AI 응답 처리 오류:", error);
+    return { success: false, error: "메시지 전송 중 오류가 발생했습니다." };
+  }
+}
+
+async function fetchAIResponse(message: string, sessionId: string) {
+  return { success: true, message: "AI 응답 예시" };
+}
+
 export async function getChatMessages(sessionId: string) {
   try {
     const userEmail = await getUserEmail();

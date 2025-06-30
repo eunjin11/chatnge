@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createChatSession, addChatMessage } from "@/services/chat";
+import {
+  createChatSession,
+  addChatMessage,
+  sendMessageAndGetAIResponse,
+} from "@/services/chat";
 import { Message } from "@/types/message";
 import { v4 as uuidv4 } from "uuid";
 import ChatBubble from "../../diary/[date]/_component/ChatBubble";
@@ -10,7 +14,7 @@ import DiaryHeader from "../../diary/_component/DiaryHeader";
 
 const ChattingPage = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages] = useState<Message[]>([
     {
       id: 1,
       text: "안녕! 난 챗인지야 :)\n무슨 이야기든 편하게 말해도 괜찮아.",
@@ -41,22 +45,22 @@ const ChattingPage = () => {
           "안녕! 난 챗인지야 :)\n무슨 이야기든 편하게 말해도 괜찮아.",
           "ASSISTANT",
         );
-        const messageResult = await addChatMessage(sessionId, input, "USER");
+        const messageResult = await sendMessageAndGetAIResponse(
+          sessionId,
+          input,
+        );
 
         if (messageResult.success) {
           // 성공 시 /chat/[sessionId] 경로로 이동
           router.push(`/chat/${sessionId}`);
         } else {
           console.error("채팅 메시지 추가 실패:", messageResult.error);
-          // 에러 처리 (사용자에게 알림 등)
         }
       } else {
         console.error("채팅 세션 생성 실패:", sessionResult.error);
-        // 에러 처리 (사용자에게 알림 등)
       }
     } catch (error) {
       console.error("채팅 세션 생성 중 오류:", error);
-      // 에러 처리 (사용자에게 알림 등)
     }
   };
 
