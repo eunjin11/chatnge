@@ -39,7 +39,7 @@ const ChatPage = () => {
         } else {
           setError(result.error || "채팅방 목록을 불러올 수 없습니다.");
         }
-      } catch (err) {
+      } catch {
         setError("채팅방 목록 로딩 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
