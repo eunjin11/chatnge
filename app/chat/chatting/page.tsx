@@ -36,7 +36,11 @@ const ChattingPage = () => {
       const sessionResult = await createChatSession(sessionId);
 
       if (sessionResult.success) {
-        // 사용자 메시지를 데이터베이스에 추가
+        await addChatMessage(
+          sessionId,
+          "안녕! 난 챗인지야 :)\n무슨 이야기든 편하게 말해도 괜찮아.",
+          "ASSISTANT",
+        );
         const messageResult = await addChatMessage(sessionId, input, "USER");
 
         if (messageResult.success) {

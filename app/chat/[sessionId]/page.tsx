@@ -7,7 +7,7 @@ import { Message } from "@/types/message";
 import ChatBubble from "../../diary/[date]/_component/ChatBubble";
 import DiaryHeader from "../../diary/_component/DiaryHeader";
 
-const ChatPage = () => {
+const ChatSessionPage = () => {
   const params = useParams();
   const { sessionId } = params;
   const [messages, setMessages] = useState<Message[]>([]);
@@ -134,4 +134,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage;
+export default ChatSessionPage;

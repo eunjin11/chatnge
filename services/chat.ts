@@ -98,3 +98,35 @@ export async function getChatMessages(sessionId: string) {
     };
   }
 }
+
+export async function getUserChatSessions() {
+  try {
+    const userEmail = await getUserEmail();
+
+    // 사용자의 모든 채팅 세션을 최신순으로 가져오기
+    const sessions = await prisma.conversation_sessions.findMany({
+      where: {
+        user_email: userEmail,
+      },
+      orderBy: {
+        session_start_time: "desc",
+      },
+      include: {
+        chat_messages: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1, // 가장 최근 메시지만 가져오기
+        },
+      },
+    });
+
+    return { success: true, sessions };
+  } catch (error) {
+    console.error("채팅 세션 목록 조회 오류:", error);
+    return {
+      success: false,
+      error: "채팅 세션 목록 조회 중 오류가 발생했습니다.",
+    };
+  }
+}
