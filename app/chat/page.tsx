@@ -39,7 +39,8 @@ const ChatPage = () => {
         } else {
           setError(result.error || "채팅방 목록을 불러올 수 없습니다.");
         }
-      } catch {
+      } catch (error) {
+        console.error("채팅 세션 로딩 오류: ", error);
         setError("채팅방 목록 로딩 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
