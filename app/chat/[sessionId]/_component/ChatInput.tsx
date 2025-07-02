@@ -33,18 +33,20 @@ const ChatInput = ({ sessionId }: ChatInputProps) => {
       // AI 응답을 받아서 처리
       const result = await sendMessageAndGetAIResponse(sessionId, input);
 
-      if (result.success) {
+      if (result.success && "aiResponse" in result) {
         // AI 응답을 UI에 추가
         const aiMessage: Message = {
           id: result.aiResponse?.id || Date.now() + 1,
-          text: result.aiMessage,
+          text: result.aiResponse?.content || "",
           isUser: false,
         };
 
         // Context를 통해 메시지 추가
         addNewMessages(userMessage, aiMessage);
       } else {
-        console.error("AI 응답 처리 실패:", result.error);
+        if ("error" in result && result.error) {
+          console.error("AI 응답 처리 실패:", result.error);
+        }
         // 에러 처리 (사용자에게 알림 등)
       }
     } catch (error) {

@@ -54,7 +54,9 @@ const ChattingPage = () => {
           // 성공 시 /chat/[sessionId] 경로로 이동
           router.push(`/chat/${sessionId}`);
         } else {
-          console.error("채팅 메시지 추가 실패:", messageResult.error);
+          if ("error" in messageResult && messageResult.error) {
+            console.error("채팅 메시지 추가 실패:", messageResult.error);
+          }
         }
       } else {
         console.error("채팅 세션 생성 실패:", sessionResult.error);
