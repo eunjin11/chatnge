@@ -9,18 +9,20 @@ datasource db {
 }
 
 model User {
-  email            String          @id @unique
-  name             String
-  nickname         String?
-  password         String
-  birthdate        DateTime
-  motivation       String[]        @default([])
-  status           String?
-  medicationStatus String          @default("UNKNOWN")
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  EmotionRecord    EmotionRecord[]
-  ChatMessage      ChatMessage[]
+  email                 String                  @id @unique
+  name                  String
+  nickname              String?
+  password              String
+  birthdate             DateTime
+  motivation            String[]                @default([])
+  status                String?
+  medicationStatus      String                  @default("UNKNOWN")
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  chat_messages         chat_messages[]
+  conversation_sessions conversation_sessions[]
+  EmotionRecord         EmotionRecord[]
+  vector_memories       vector_memories[]
 
   @@map("users")
 }
@@ -43,22 +45,72 @@ model EmotionRecord {
   @@map("emotion_records")
 }
 
+model chat_messages {
+  id                    Int                    @id @default(autoincrement())
+  userEmail             String
+  role                  ChatRole
+  content               String
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime
+  date                  DateTime
+  session_id            String?                @db.VarChar(50)
+  users                 User                   @relation(fields: [userEmail], references: [email])
+  conversation_sessions conversation_sessions? @relation(fields: [session_id], references: [session_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_message_session")
+
+  @@index([userEmail])
+}
+
+model conversation_sessions {
+  id                         Int                       @id @default(autoincrement())
+  session_id                 String                    @unique @db.VarChar(50)
+  user_email                 String
+  session_date               DateTime                  @default(dbgenerated("CURRENT_DATE")) @db.Date
+  session_start_time         DateTime?                 @default(now()) @db.Timestamp(6)
+  session_end_time           DateTime?                 @db.Timestamp(6)
+  session_summary            String?
+  top_emotions               Json?
+  primary_emotion            String?                   @db.VarChar(100)
+  primary_emotion_confidence Decimal?                  @db.Decimal(4, 3)
+  is_complex_emotion         Boolean?                  @default(false)
+  emotion_complexity_score   Decimal?                  @db.Decimal(3, 2)
+  message_count              Int?                      @default(0)
+  is_migrated_to_vector      Boolean?                  @default(false)
+  created_at                 DateTime?                 @default(now()) @db.Timestamp(6)
+  updated_at                 DateTime?                 @default(now()) @db.Timestamp(6)
+  chat_messages              chat_messages[]
+  users                      User                      @relation(fields: [user_email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "fk_session_user")
+  session_emotion_details    session_emotion_details[]
+  vector_memories            vector_memories[]
+}
+
+model session_emotion_details {
+  id                     Int                   @id @default(autoincrement())
+  session_id             String                @db.VarChar(50)
+  emotion_name           String                @db.VarChar(100)
+  confidence_score       Decimal               @db.Decimal(4, 3)
+  analysis_method        String?               @db.VarChar(50)
+  emotion_hierarchy_path String?
+  source_text            String?
+  created_at             DateTime?             @default(now()) @db.Timestamp(6)
+  conversation_sessions  conversation_sessions @relation(fields: [session_id], references: [session_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_session_emotion_detail")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model vector_memories {
+  id                    Int                    @id @default(autoincrement())
+  memory_id             String                 @unique @db.VarChar(50)
+  user_email            String
+  session_id            String?                @db.VarChar(50)
+  content_summary       String?
+  importance_score      Decimal?               @default(0.50) @db.Decimal(3, 2)
+  access_count          Int?                   @default(0)
+  last_accessed_at      DateTime?              @db.Timestamp(6)
+  created_at            DateTime?              @default(now()) @db.Timestamp(6)
+  conversation_sessions conversation_sessions? @relation(fields: [session_id], references: [session_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_vector_session")
+  users                 User                   @relation(fields: [user_email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "fk_vector_user")
+}
+
 enum ChatRole {
   USER
   ASSISTANT
-}
-
-model ChatMessage {
-  id        Int      @id @default(autoincrement())
-  userEmail String
-  date      DateTime
-  role      ChatRole
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userEmail], references: [email])
-
-  @@index([userEmail])
-  @@map("chat_messages")
 }
